@@ -3,4 +3,4 @@ project(bh_sim)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(3d-barnes-hut main.cpp Model.cpp Model.h)
+add_executable(3d-barnes-hut main.cpp model.cpp model.h NBodySim.cpp NBodySim.h integrator/integrator.cpp integrator/integrator.h vec3d.cpp vec3d.h force_calc/force_calc.cpp force_calc/force_calc.h star.cpp star.h integrator/integrator_euler.cpp integrator/integrator_euler.h force_calc/brute_force_calc.cpp force_calc/brute_force_calc.h)
