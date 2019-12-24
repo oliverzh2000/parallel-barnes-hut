@@ -22,6 +22,8 @@ public:
     /// Assumes that ForceCalc::computeNetAccel has already been called on the Model for the current timestep.
     virtual void advanceSingleStep(Model &model) = 0;
 
+    /// Return the elapsed time since the start of the simulation (when time = 0);
+    /// Each iteration of advanceSingleStep increases elapsed time by one timestep.
     double elapsedTime();
 };
 

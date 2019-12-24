@@ -4,9 +4,7 @@
 
 #include "integrator_euler.h"
 
-IntegratorEuler::IntegratorEuler(double timestep) : Integrator(timestep) {
-
-}
+IntegratorEuler::IntegratorEuler(double timestep) : Integrator(timestep) {}
 
 void IntegratorEuler::advanceSingleStep(Model &model) {
 

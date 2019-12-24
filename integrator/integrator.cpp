@@ -8,5 +8,5 @@ Integrator::Integrator(double timestep)
         : timestep{timestep} {}
 
 double Integrator::elapsedTime() {
-    return 0;
+    return timestepCount * timestep;
 }

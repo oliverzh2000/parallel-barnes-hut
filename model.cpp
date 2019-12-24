@@ -34,6 +34,22 @@ Vec3D Model::getAcc(int i) {
     return stars.at(i).acc;
 }
 
+size_t Model::size() {
+    return stars.size();
+}
+
+Vec3D &Model::pos(int i) {
+    return stars.at(i).pos;
+}
+
+Vec3D &Model::vel(int i) {
+    return stars.at(i).vel;
+}
+
+Vec3D &Model::acc(int i) {
+    return stars.at(i).acc;
+}
+
 const std::vector<Star> &Model::getStars() const {
     return stars;
 }
