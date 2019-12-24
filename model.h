@@ -40,8 +40,17 @@ public:
     /// Get the acceleration vector of the star at index i.
     Vec3D getAcc(int i);
 
-    /// Get the stars represented by this Model.
+    Vec3D &pos(int i);
+
+    Vec3D &vel(int i);
+
+    Vec3D &acc(int i);
+
+    /// Get a read-only version of the Stars represented by this Model.
     const std::vector<Star> &getStars() const;
+
+    /// Get the number of Stars this Model currenly holds
+    size_t size();
 };
 
 

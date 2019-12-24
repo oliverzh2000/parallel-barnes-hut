@@ -12,7 +12,20 @@ struct Vec3D {
     double z;
 
 public:
-    double distanceSquared(const Vec3D &other);
+    /// Return the (euclidean) distance from this to the given Vec3D.
+    double distanceTo(const Vec3D &other) const;
+
+    Vec3D &operator+=(const Vec3D &other);
+
+    const Vec3D operator+(const Vec3D &other) const;
+
+    Vec3D &operator-=(const Vec3D &other);
+
+    const Vec3D operator-(const Vec3D &other) const;
+
+    Vec3D &operator*=(double k);
+
+    Vec3D &operator*(double k) const;
 };
 
 
