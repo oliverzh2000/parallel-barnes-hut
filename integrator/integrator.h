@@ -12,6 +12,7 @@ class Model;
  * to update velocity to update position for a Model of Stars.
  */
 class Integrator {
+protected:
     double timestep;
     int timestepCount;
 

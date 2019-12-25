@@ -18,10 +18,12 @@ int main() {
 
     auto *sim = new NBodySim{new IntegratorEuler{timestep}, new BruteForceCalc{gravConst, softening}};
 
-    sim->addStar({{0, 0, 0}, {0, 0, 0}, 1});
-    sim->addStar({{1, 0, 0}, {0, 0, 0}, 1});
+    sim->addStar({{0, 0, 0}, {0, 1, 0}, 1});
+    sim->addStar({{1, 0, 0}, {0, -1, 0}, 1});
 
-    sim->advanceSingleStep();
+    for (int i = 0; i < 100; ++i) {
+        sim->advanceSingleStep();
+    }
 
     std::cout << "hello" << std::endl;
 }
