@@ -13,9 +13,10 @@
 int main() {
     std::cout << "N-body simulation using Barnes-Hut, by Oliver Zhang." << std::endl;
     double gravConst = 1.0;
+    double softening = 0.01;
     double timestep = 1.0;
 
-    auto *sim = new NBodySim{new IntegratorEuler{timestep}, new BruteForceCalc{gravConst}};
+    auto *sim = new NBodySim{new IntegratorEuler{timestep}, new BruteForceCalc{gravConst, softening}};
 
     sim->addStar({{0, 0, 0}, {0, 0, 0}, 1});
     sim->addStar({{1, 0, 0}, {0, 0, 0}, 1});

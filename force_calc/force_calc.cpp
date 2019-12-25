@@ -4,5 +4,5 @@
 
 #include "force_calc.h"
 
-ForceCalc::ForceCalc(double gravConst)
-        : gravConst{gravConst} {}
+ForceCalc::ForceCalc(double gravConst, double softening)
+        : gravConst{gravConst}, softeningSquared{softening * softening} {}

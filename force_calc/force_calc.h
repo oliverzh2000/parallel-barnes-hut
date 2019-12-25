@@ -13,9 +13,10 @@ class Model;
 class ForceCalc {
 protected:
     double gravConst;
+    double softeningSquared;
 
 public:
-    explicit ForceCalc(double gravConst);
+    explicit ForceCalc(double gravConst, double softening);
 
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
     virtual void updateNetAccel(Model &model) = 0;

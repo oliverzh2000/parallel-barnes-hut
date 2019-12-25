@@ -6,7 +6,7 @@
 #include "../vec3d.h"
 #include "../model.h"
 
-BruteForceCalc::BruteForceCalc(double gravConst) : ForceCalc(gravConst) {}
+BruteForceCalc::BruteForceCalc(double gravConst, double softening) : ForceCalc(gravConst, softening) {}
 
 void BruteForceCalc::updateNetAccel(Model &model) {
     for (int i = 0; i < model.size(); ++i) {
@@ -16,7 +16,8 @@ void BruteForceCalc::updateNetAccel(Model &model) {
         for (int j = 0; j < model.size(); ++j) {
             if (i != j) {
                 double r = model.pos(i).distanceTo(model.pos(j));
-                model.acc(i) += (model.pos(j) - model.pos(i)) * (gravConst * model.mass(j) / r * r * r);
+                model.acc(i) += (model.pos(j) - model.pos(i)) *
+                                (gravConst * model.mass(j) / (r * r + softeningSquared) * r);
             }
         }
     }

@@ -9,7 +9,7 @@
 
 class BruteForceCalc : public ForceCalc {
 public:
-    explicit BruteForceCalc(double gravConst);
+    explicit BruteForceCalc(double gravConst, double softening);
 
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
     /// Runs in quadratic time.
