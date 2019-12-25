@@ -12,6 +12,8 @@ struct Star {
     Vec3D vel;
     Vec3D acc;
     double mass;
+
+    Star(Vec3D pos, Vec3D vel, double mass);
 };
 
 

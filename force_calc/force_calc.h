@@ -11,16 +11,17 @@ class Model;
  * Abstract base class for force/acceleration computation on a Model of Stars.
  */
 class ForceCalc {
+protected:
     double gravConst;
 
 public:
     explicit ForceCalc(double gravConst);
 
-    /// Update the net acceleration for each of the stars in the given Model.
+    /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
     virtual void updateNetAccel(Model &model) = 0;
 
     /// Code to be executed after one timestep has elapsed.
-    virtual void onAdvanceSingleStep() = 0;
+    virtual void afterAdvanceSingleStep() = 0;
 };
 
 

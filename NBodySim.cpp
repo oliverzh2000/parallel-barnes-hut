@@ -11,7 +11,9 @@ NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
         : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
 
 void NBodySim::advanceSingleStep() {
-
+    forceCalc->updateNetAccel(model);
+    integrator->advanceSingleStep(model);
+    forceCalc->afterAdvanceSingleStep();
 }
 
 void

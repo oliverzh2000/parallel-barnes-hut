@@ -41,7 +41,7 @@ Vec3D &Vec3D::operator*=(double k) {
     return *this;
 }
 
-Vec3D &Vec3D::operator*(double k) const {
+const Vec3D Vec3D::operator*(double k) const {
     return Vec3D{*this} *= k;
 }
 

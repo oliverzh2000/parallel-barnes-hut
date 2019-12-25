@@ -15,11 +15,11 @@ void BruteForceCalc::updateNetAccel(Model &model) {
     for (int i = 0; i < model.size(); ++i) {
         for (int j = 0; j < model.size(); ++j) {
             if (i != j) {
-                double r = model.getPos(i).distanceTo(model.getPos(j));
-                model.acc(i) += (model.pos(j) - model.pos(i)) * (r * r * r);
+                double r = model.pos(i).distanceTo(model.pos(j));
+                model.acc(i) += (model.pos(j) - model.pos(i)) * (gravConst * model.mass(j) / r * r * r);
             }
         }
     }
 }
 
-void BruteForceCalc::onAdvanceSingleStep() {}
+void BruteForceCalc::afterAdvanceSingleStep() {}

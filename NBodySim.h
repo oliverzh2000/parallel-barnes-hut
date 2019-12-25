@@ -19,7 +19,7 @@ class ForceCalc;
 
 class Star;
 
-class NBodySim {
+class NBodySim final {
     Model model;
     std::unique_ptr<Integrator> integrator;
     std::unique_ptr<ForceCalc> forceCalc;

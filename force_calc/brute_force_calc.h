@@ -15,7 +15,7 @@ public:
     /// Runs in quadratic time.
     void updateNetAccel(Model &model) override;
 
-    void onAdvanceSingleStep() override;
+    void afterAdvanceSingleStep() override;
 };
 
 

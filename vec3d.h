@@ -25,7 +25,7 @@ public:
 
     Vec3D &operator*=(double k);
 
-    Vec3D &operator*(double k) const;
+    const Vec3D operator*(double k) const;
 };
 
 

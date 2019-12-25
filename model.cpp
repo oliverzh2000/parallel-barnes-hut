@@ -10,30 +10,6 @@ void Model::addStar(Star star) {
     stars.emplace_back(star);
 }
 
-void Model::setPos(int i, Vec3D pos) {
-    stars.at(i).pos = pos;
-}
-
-void Model::setVel(int i, Vec3D vel) {
-    stars.at(i).vel = vel;
-}
-
-void Model::setAcc(int i, Vec3D acc) {
-    stars.at(i).acc = acc;
-}
-
-Vec3D Model::getPos(int i) {
-    return stars.at(i).pos;
-}
-
-Vec3D Model::getVel(int i) {
-    return stars.at(i).vel;
-}
-
-Vec3D Model::getAcc(int i) {
-    return stars.at(i).acc;
-}
-
 size_t Model::size() {
     return stars.size();
 }
@@ -52,4 +28,8 @@ Vec3D &Model::acc(int i) {
 
 const std::vector<Star> &Model::getStars() const {
     return stars;
+}
+
+double &Model::mass(int i) {
+    return stars.at(i).mass;
 }
