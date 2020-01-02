@@ -2,13 +2,13 @@
 // Created by Oliver Zhang on 2019-12-23.
 //
 
-#include "brute_force_calc.h"
+#include "force_calc_exact.h"
 #include "../vec3d.h"
 #include "../model.h"
 
-BruteForceCalc::BruteForceCalc(double gravConst, double softening) : ForceCalc(gravConst, softening) {}
+ForceCalcExact::ForceCalcExact(double gravConst, double softening) : ForceCalc(gravConst, softening) {}
 
-void BruteForceCalc::updateNetAccel(Model &model) {
+void ForceCalcExact::updateNetAccel(Model &model) {
     for (int i = 0; i < model.size(); ++i) {
         model.acc(i) = {0, 0, 0};
     }
@@ -23,4 +23,4 @@ void BruteForceCalc::updateNetAccel(Model &model) {
     }
 }
 
-void BruteForceCalc::afterAdvanceSingleStep() {}
+void ForceCalcExact::afterAdvanceSingleStep() {}
