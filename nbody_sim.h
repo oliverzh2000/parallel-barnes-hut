@@ -12,11 +12,8 @@
 #include "model.h"
 
 class Vec3D;
-
 class Integrator;
-
 class ForceCalc;
-
 class Star;
 
 class NBodySim final {
@@ -26,6 +23,10 @@ class NBodySim final {
 
 public:
     NBodySim(Integrator *integrator, ForceCalc *forceCalc);
+
+    static NBodySim readFromFile(std::istream &in);
+
+    void writeToFile(std::ostream &out);
 
     void advanceSingleStep();
 
