@@ -3,26 +3,24 @@
 //
 
 #include <iostream>
-#include "NBodySim.h"
+#include <fstream>
+#include "nbody_sim.h"
 #include "star.h"
 #include "integrator/integrator.h"
 #include "force_calc/force_calc.h"
 #include "integrator/integrator_euler.h"
-#include "force_calc/brute_force_calc.h"
+#include "force_calc/force_calc_exact.h"
 
 int main() {
-    std::cout << "N-body simulation using Barnes-Hut, by Oliver Zhang." << std::endl;
-    double gravConst = 1.0;
-    double softening = 0.01;
-    double timestep = 1.0;
+    std::cout << "N-body Barnes-Hut simulation, by Oliver Zhang." << std::endl;
 
-    auto *sim = new NBodySim{new IntegratorEuler{timestep}, new BruteForceCalc{gravConst, softening}};
+    std::ifstream inFile{"sim_data/sim3/in.txt"};
+    NBodySim sim = NBodySim::readFromFile(inFile);
 
-    sim->addStar({{0, 0, 0}, {0, 1, 0}, 1});
-    sim->addStar({{1, 0, 0}, {0, -1, 0}, 1});
-
-    for (int i = 0; i < 100; ++i) {
-        sim->advanceSingleStep();
+    for (int i = 0; i < 500; ++i) {
+        sim.advanceSingleStep();
+        std::ofstream outFile{"sim_data/sim3/out-" + std::to_string(i)  + ".txt"};
+        sim.writeToFile(outFile);
     }
 
     std::cout << "hello" << std::endl;
