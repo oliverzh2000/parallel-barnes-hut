@@ -9,7 +9,7 @@
 #include "integrator/integrator.h"
 #include "force_calc/force_calc.h"
 #include "integrator/integrator_euler.h"
-#include "force_calc/force_calc_exact.h"
+#include "force_calc/force_calc_all_pairs.h"
 
 int main() {
     std::cout << "N-body Barnes-Hut simulation, by Oliver Zhang." << std::endl;

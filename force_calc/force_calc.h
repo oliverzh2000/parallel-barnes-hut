@@ -5,6 +5,9 @@
 #ifndef BH_SIM_FORCECALCULATOR_H
 #define BH_SIM_FORCECALCULATOR_H
 
+#include "../vec3d.h"
+#include "../star.h"
+
 class Model;
 
 /**
@@ -23,6 +26,8 @@ public:
 
     /// Code to be executed after one timestep has elapsed.
     virtual void afterAdvanceSingleStep() = 0;
+
+    Vec3D computeAcc(const Vec3D &pos, const Vec3D &otherPos, double mass);
 };
 
 

@@ -6,8 +6,9 @@
 #include "integrator/integrator.h"
 #include "force_calc/force_calc.h"
 #include "star.h"
-#include "force_calc/force_calc_exact.h"
+#include "force_calc/force_calc_all_pairs.h"
 #include "integrator/integrator_euler.h"
+#include "force_calc/force_calc_barnes_hut.h"
 #include <fstream>
 #include <limits>
 
@@ -30,16 +31,12 @@ void NBodySim::addStar(Star star) {
     model.addStar(star);
 }
 
-const std::vector<Star> &NBodySim::getStars() const {
-    return model.getStars();
-}
-
 NBodySim NBodySim::readFromFile(std::istream &in) {
     // TODO: implement deserialization of the integrator and force calculator, instead of hardcoding it here.
     double gravConst = 1.0;
     double softening = 0.01;
     double timestep = 0.01;
-    NBodySim sim = NBodySim{new IntegratorEuler{timestep}, new ForceCalcExact{gravConst, softening}};
+    NBodySim sim = NBodySim{new IntegratorEuler{timestep}, new ForceCalcAllPairs{gravConst, softening}};
     int n;
     in >> n;
     for (int i = 0; i < n; ++i) {
@@ -52,9 +49,9 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
 
 void NBodySim::writeToFile(std::ostream &out) {
     // TODO: implement serialization of the integrator and force calculator.
-    unsigned long long int n = getStars().size();
+    unsigned long long int n = model.getStars().size();
     out << n << std::endl;
-    for (const Star &star: getStars()) {
+    for (const Star &star: model.getStars()) {
         out.precision(std::numeric_limits<double>::max_digits10 + 2);
         out << star.pos.x << " "<< star.pos.y << " " << star.pos.z << " " << star.vel.x << " " << star.vel.y << " " << star.vel.z << " " << star.mass << std::endl;
     }

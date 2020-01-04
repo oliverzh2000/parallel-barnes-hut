@@ -35,7 +35,6 @@ public:
 
     void addStar(Star star);
 
-    const std::vector<Star> &getStars() const;
 };
 
 

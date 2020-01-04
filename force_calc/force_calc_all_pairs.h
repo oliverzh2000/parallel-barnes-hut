@@ -7,9 +7,9 @@
 
 #include "force_calc.h"
 
-class ForceCalcExact : public ForceCalc {
+class ForceCalcAllPairs : public ForceCalc {
 public:
-    explicit ForceCalcExact(double gravConst, double softening);
+    explicit ForceCalcAllPairs(double gravConst, double softening);
 
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
     /// Runs in quadratic time.
