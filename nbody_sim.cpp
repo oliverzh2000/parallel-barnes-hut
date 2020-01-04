@@ -18,7 +18,6 @@ NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
 void NBodySim::advanceSingleStep() {
     forceCalc->updateNetAccel(model);
     integrator->advanceSingleStep(model);
-    forceCalc->afterAdvanceSingleStep();
 }
 
 void
@@ -31,12 +30,43 @@ void NBodySim::addStar(Star star) {
     model.addStar(star);
 }
 
+double NBodySim::readParamFromName(std::istream &in, std::string expectedName) {
+    std::string name;
+    in >> name;
+    if (name != expectedName) {
+        throw std::runtime_error{expectedName + " missing or incomplete"};
+    }
+    double value;
+    in >> value;
+    return value;
+}
+
 NBodySim NBodySim::readFromFile(std::istream &in) {
-    // TODO: implement deserialization of the integrator and force calculator, instead of hardcoding it here.
-    double gravConst = 1.0;
-    double softening = 0.01;
-    double timestep = 0.01;
-    NBodySim sim = NBodySim{new IntegratorEuler{timestep}, new ForceCalcAllPairs{gravConst, softening}};
+    // TODO: Replace this hardcoded parsing with json or at least make a dedicated parser and serializer.
+    Integrator *integrator;
+    std::string integratorName;
+    in >> integratorName;
+    if (integratorName == "IntegratorEuler") {
+        integrator = new IntegratorEuler(readParamFromName(in, "timestep"));
+    } else {
+        throw std::runtime_error{"invalid integrator name"};
+    }
+
+    ForceCalc *forceCalc;
+    std::string forceCalcName;
+    in >> forceCalcName;
+    if (forceCalcName == "ForceCalcAllPairs") {
+        forceCalc = new ForceCalcAllPairs{readParamFromName(in, "gravConst"),
+                                          readParamFromName(in, "softening")};
+    } else if (forceCalcName == "ForceCalcBarnesHut") {
+        forceCalc = new ForceCalcBarnesHut{readParamFromName(in, "gravConst"),
+                                           readParamFromName(in, "softening"),
+                                           readParamFromName(in, "theta")};
+    } else {
+        throw std::runtime_error{"invalid forceCalc name"};
+    }
+
+    NBodySim sim = NBodySim{integrator, forceCalc};
     int n;
     in >> n;
     for (int i = 0; i < n; ++i) {
@@ -48,7 +78,6 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
 }
 
 void NBodySim::writeToFile(std::ostream &out) {
-    // TODO: implement serialization of the integrator and force calculator.
     unsigned long long int n = model.getStars().size();
     out << n << std::endl;
     for (const Star &star: model.getStars()) {

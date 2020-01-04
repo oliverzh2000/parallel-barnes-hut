@@ -35,6 +35,8 @@ public:
 
     void addStar(Star star);
 
+private:
+    double static readParamFromName(std::istream &in, std::string expectedName);
 };
 
 
