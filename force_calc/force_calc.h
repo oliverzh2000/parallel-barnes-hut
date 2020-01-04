@@ -24,10 +24,14 @@ public:
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
     virtual void updateNetAccel(Model &model) = 0;
 
-    /// Code to be executed after one timestep has elapsed.
-    virtual void afterAdvanceSingleStep() = 0;
-
-    Vec3D computeAcc(const Vec3D &pos, const Vec3D &otherPos, double mass);
+    /**
+     * Returns the gravitational field due to an object at the given position.
+     * @param pos Position of a 'test particle' to evaluate grav field at
+     * @param sourcePos Position of the source object
+     * @param mass Mass of the source object
+     * @return the vector value of the grav. field due to source at the given position
+     */
+    Vec3D gravField(const Vec3D &sourcePos, double mass, const Vec3D &pos);
 };
 
 
