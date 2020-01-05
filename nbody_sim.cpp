@@ -2,6 +2,9 @@
 // Created by Oliver Zhang on 2019-12-20.
 //
 
+#include <fstream>
+#include <limits>
+
 #include "nbody_sim.h"
 #include "integrator/integrator.h"
 #include "force_calc/force_calc.h"
@@ -9,22 +12,18 @@
 #include "force_calc/force_calc_all_pairs.h"
 #include "integrator/integrator_euler.h"
 #include "force_calc/force_calc_barnes_hut.h"
-#include <fstream>
-#include <limits>
+#include "integrator/integrator_leapfrog.h"
 
 NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
         : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
 
 void NBodySim::advanceSingleStep() {
-    forceCalc->updateNetAccel(model);
-    integrator->advanceSingleStep(model);
+    integrator->advanceSingleStep(*forceCalc, model);
 }
 
 void
 NBodySim::addSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radius, double radiusStdDev, double avgMass,
-                          double massStdDev) {
-
-}
+                          double massStdDev) {}
 
 void NBodySim::addStar(Star star) {
     model.addStar(star);
@@ -48,6 +47,8 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
     in >> integratorName;
     if (integratorName == "IntegratorEuler") {
         integrator = new IntegratorEuler(readParamFromName(in, "timestep"));
+    } else if (integratorName == "IntegratorLeapfrog") {
+        integrator = new IntegratorLeapfrog(readParamFromName(in, "timestep"));
     } else {
         throw std::runtime_error{"invalid integrator name"};
     }
