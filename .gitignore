@@ -1,5 +1,6 @@
+*.exe
 sim_data/
 .idea/
-cmake-build-debug/
+cmake-build-*/
 sim_data/
 visualizer/.idea/
