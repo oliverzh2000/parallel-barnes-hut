@@ -18,14 +18,20 @@ int main() {
     std::string simDir = "sim_data/sim6/";
     std::ifstream inFile{simDir + "in.txt"};
     NBodySim sim = NBodySim::readFromFile(inFile);
-    int n = 500000000;
+    int n = 1000000;
+    int nPerWrite = 1000;
+    bool writeToFile = false;
+
+
     for (int i = 0; i < n; ++i) {
         sim.advanceSingleStep();
-//        if (i % 10000 == 0) {
-//            std::ofstream outFile{simDir + "out-" + std::to_string(i)  + ".txt"};
-//            sim.writeToFile(outFile);
-//            std::cout << i / double(n) * 100 << std::endl;
-//        }
+        if (writeToFile) {
+            if (i % nPerWrite == 0) {
+                std::ofstream outFile{simDir + "out-" + std::to_string(i) + ".txt"};
+                sim.writeToFile(outFile);
+                std::cout << i / double(n) * 100 << std::endl;
+            }
+        }
     }
 
     std::cout << "hello" << std::endl;

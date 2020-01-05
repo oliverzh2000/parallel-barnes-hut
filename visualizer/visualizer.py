@@ -3,7 +3,7 @@ import time
 import pygame
 import os.path
 
-width = 500
+width = 800
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,40"
 pygame.init()
@@ -41,10 +41,10 @@ y_axis_color = (100, 255, 0)
 
 radius = 1
 done = False
-fps = 10000
+fps = 300
 margin = 10
 auto_size = False
-scale = 100
+scale = 300
 center_x, center_y = 0, 0
 
 screen.fill((255, 255, 255))
