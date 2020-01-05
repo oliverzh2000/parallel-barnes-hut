@@ -8,7 +8,7 @@
 ForceCalcBarnesHut::ForceCalcBarnesHut(double gravConst, double softening, double theta)
 : ForceCalc(gravConst, softening), theta{theta} {}
 
-void ForceCalcBarnesHut::updateNetAccel(Model &model) {
+void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
     for (int i = 0; i < model.size(); ++i) {
         model.acc(i) = {0, 0, 0};
     }
@@ -18,12 +18,12 @@ void ForceCalcBarnesHut::updateNetAccel(Model &model) {
     }
 }
 
-Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) {
+Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const {
     // Calculate force directly when:
     // 1) On leaf nodes, since there are no more children.
     // 2) Angular separation of this node's center of mass and pos is less than max threshold.
     if (node.isLeaf() || node.centerOfMass.distanceTo(pos) / length < theta) {
-        return gravField(node.centerOfMass, node.totalMass, pos);
+        return gravFieldDueToSingleObject(node.centerOfMass, node.totalMass, pos);
     } else {
         Vec3D accSum;
         for (const OctTree::Node *child : node.children) {

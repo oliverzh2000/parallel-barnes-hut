@@ -12,7 +12,7 @@ public:
     explicit ForceCalcAllPairs(double gravConst, double softening);
 
     /// Runs in quadratic time.
-    void updateNetAccel(Model &model) override;
+    void updateNetAccel(Model &model) const override;
 
 };
 

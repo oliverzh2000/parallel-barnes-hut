@@ -11,7 +11,7 @@ class IntegratorEuler : public Integrator {
 public:
     explicit IntegratorEuler(double timestep);
 
-    void advanceSingleStep(Model &model) override;
+    void advanceSingleStep(const ForceCalc &forceCalc, Model &model) override;
 };
 
 

@@ -15,10 +15,10 @@ public:
     explicit ForceCalcBarnesHut(double gravConst, double softening, double theta);
 
     /// Builds and traverses an OctTree.
-    void updateNetAccel(Model &model) override;
+    void updateNetAccel(Model &model) const override;
 
 private:
-    Vec3D gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos);
+    Vec3D gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const;
 };
 
 

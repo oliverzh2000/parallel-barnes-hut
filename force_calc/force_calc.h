@@ -22,7 +22,7 @@ public:
     explicit ForceCalc(double gravConst, double softening);
 
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
-    virtual void updateNetAccel(Model &model) = 0;
+    virtual void updateNetAccel(Model &model) const = 0;
 
     /**
      * Returns the gravitational field due to an object at the given position.
@@ -31,7 +31,7 @@ public:
      * @param mass Mass of the source object
      * @return the vector value of the grav. field due to source at the given position
      */
-    Vec3D gravField(const Vec3D &sourcePos, double mass, const Vec3D &pos);
+    Vec3D gravFieldDueToSingleObject(const Vec3D &sourcePos, double mass, const Vec3D &pos) const;
 };
 
 

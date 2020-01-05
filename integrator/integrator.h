@@ -6,6 +6,7 @@
 #define BH_SIM_INTEGRATOR_H
 
 class Model;
+class ForceCalc;
 
 /**
  * Abstract base class for an integration scheme that uses acceleration (computed by a ForceCalc)
@@ -14,14 +15,14 @@ class Model;
 class Integrator {
 protected:
     double timestep;
-    int timestepCount;
+    int timestepCount = 0;
 
 public:
     explicit Integrator(double timestep);
 
     /// Update the positions and velocities of each of the stars in the given Model by one timestep.
     /// Assumes that ForceCalc::computeNetAccel has already been called on the Model for the current timestep.
-    virtual void advanceSingleStep(Model &model) = 0;
+    virtual void advanceSingleStep(const ForceCalc &forceCalc, Model &model) = 0;
 
     /// Return the elapsed time since the start of the simulation (when time = 0);
     /// Each iteration of advanceSingleStep increases elapsed time by one timestep.

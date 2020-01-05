@@ -7,7 +7,7 @@
 ForceCalc::ForceCalc(double gravConst, double softening)
         : gravConst{gravConst}, softeningSquared{softening * softening} {}
 
-Vec3D ForceCalc::gravField(const Vec3D &sourcePos, double mass, const Vec3D &pos) {
+Vec3D ForceCalc::gravFieldDueToSingleObject(const Vec3D &sourcePos, double mass, const Vec3D &pos) const {
     double r = sourcePos.distanceTo(pos);
     if (r == 0) {
         return {0, 0, 0}; // For safety.

@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((width, width))
 
 clock = pygame.time.Clock()
 
-sim_folder = os.path.abspath(r"C:\Users\Oliver\CLionProjects\3d-barnes-hut\sim_data\sim3")
+sim_folder = os.path.abspath(r"C:\Users\Oliver\CLionProjects\3d-barnes-hut\sim_data\sim6")
 out_files = list(filter(lambda file: file.startswith("out-"), os.listdir(sim_folder)))
 out_files.sort(key=lambda file: int(file.lstrip("out-").rstrip(".txt")))
 
@@ -32,7 +32,6 @@ min_z = min([min(star[2] for star in frame) for frame in frames])
 
 def map_to_range(x, old_min, old_max, new_min, new_max):
     scale_factor = (new_max - new_min) / (old_max - old_min)
-    translation = new_min - old_min
     return (x - old_min) * scale_factor + new_min
 
 back_color = (255, 255, 255)
@@ -40,25 +39,27 @@ star_color = (0, 0, 0)
 x_axis_color = (255, 100, 0)
 y_axis_color = (100, 255, 0)
 
-radius = 2
+radius = 1
 done = False
-fps = 100
+fps = 10000
 margin = 10
 auto_size = False
 scale = 100
 center_x, center_y = 0, 0
 
+screen.fill((255, 255, 255))
 for index, frame in enumerate(frames):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
+
 
     if done:
         exit()
 
     print("progress: {}/{}".format(index, len(frames)))
 
-    screen.fill((255, 255, 255))
+    # screen.fill((255, 255, 255))
     pygame.draw.line(screen, x_axis_color, (0, width / 2), (width, width / 2))
     pygame.draw.line(screen, y_axis_color, (width / 2, 0), (width / 2, width))
 
