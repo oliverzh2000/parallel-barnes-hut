@@ -27,6 +27,7 @@ class OctTree final {
     public:
         /// Construct a new Node with one child located at the given center and given mass.
         explicit Node(const Vec3D &centerOfMass={0, 0, 0}, double mass=0);
+        ~Node();
 
         /**
          * Recursively add a child into this Node.

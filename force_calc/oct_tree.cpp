@@ -34,6 +34,12 @@ OctTree::OctTree(const Model &model) {
 OctTree::Node::Node(const Vec3D &centerOfMass, double mass)
         : children(), centerOfMass{centerOfMass}, totalMass{mass} {}
 
+OctTree::Node::~Node() {
+    for (auto &i : children) {
+        delete i;
+    }
+}
+
 void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, double mass) {
 //    assert (isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
