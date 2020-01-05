@@ -6,11 +6,10 @@
 #include "star.h"
 
 void Model::addStar(Star star) {
-    // TODO: move semantics
     stars.emplace_back(star);
 }
 
-size_t Model::size() {
+size_t Model::size() const {
     return stars.size();
 }
 
@@ -32,4 +31,10 @@ const std::vector<Star> &Model::getStars() const {
 
 double &Model::mass(int i) {
     return stars.at(i).mass;
+}
+
+void Model::appendFrom(const Model &other) {
+    for (const Star &star: other.getStars()) {
+        addStar(star);
+    }
 }

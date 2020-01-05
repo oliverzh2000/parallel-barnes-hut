@@ -30,8 +30,8 @@ public:
 
     void advanceSingleStep();
 
-    void addSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radius, double radiusStdDev, double avgMass,
-                         double massStdDev);
+    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radiusStdDev, double avgMass,
+                                    double massStdDev, int seed);
 
     void addStar(Star star);
 
