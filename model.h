@@ -33,8 +33,10 @@ public:
     /// Get a read-only version of the Stars represented by this Model.
     const std::vector<Star> &getStars() const;
 
-    /// Get the number of Stars this Model currenly holds
-    size_t size();
+    void appendFrom(const Model &other);
+
+    /// Get the number of Stars this Model currently holds
+    size_t size() const;
 };
 
 

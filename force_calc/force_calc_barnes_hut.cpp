@@ -22,7 +22,8 @@ Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double len
     // Calculate force directly when:
     // 1) On leaf nodes, since there are no more children.
     // 2) Angular separation of this node's center of mass and pos is less than max threshold.
-    if (node.isLeaf() || node.centerOfMass.distanceTo(pos) / length < theta) {
+    double ratio = length / node.centerOfMass.distanceTo(pos);
+    if (node.isLeaf() || ratio < theta) {
         return gravFieldDueToSingleObject(node.centerOfMass, node.totalMass, pos);
     } else {
         Vec3D accSum;

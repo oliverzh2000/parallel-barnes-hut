@@ -64,7 +64,7 @@ int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) const {
     int octant = 0;
     if (pos.x < center.x) octant += 1;
     if (pos.y < center.y) octant += 2;
-    if (pos.z < center.z) octant += 4;
+    if (pos.z > center.z) octant += 4;
     return octant;
 }
 
@@ -90,6 +90,15 @@ bool OctTree::Node::isEmpty() const {
 bool OctTree::Node::isLeaf() const {
     // TODO: potential speedup.
     // A boolean flag can be stored instead of linear time traversal through all children
+//    return children[0] == nullptr &&
+//           children[1] == nullptr &&
+//           children[2] == nullptr &&
+//           children[3] == nullptr &&
+//           children[4] == nullptr &&
+//           children[5] == nullptr &&
+//           children[6] == nullptr &&
+//           children[7] == nullptr;
+
     for (auto i : children) {
         if (i != nullptr) {
             return false;
