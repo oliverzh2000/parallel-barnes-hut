@@ -3,7 +3,7 @@ import time
 import pygame
 import os.path
 
-width = 500
+width = 800
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "0,40"
 pygame.init()
@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((width, width))
 
 clock = pygame.time.Clock()
 
-sim_folder = os.path.abspath(r"C:\Users\Oliver\CLionProjects\3d-barnes-hut\sim_data\sim5")
+sim_folder = os.path.abspath(r"C:\Users\Oliver\CLionProjects\3d-barnes-hut\sim_data\sim6")
 out_files = list(filter(lambda file: file.startswith("out-"), os.listdir(sim_folder)))
 out_files.sort(key=lambda file: int(file.lstrip("out-").rstrip(".txt")))
 
@@ -39,12 +39,11 @@ star_color = (0, 0, 0)
 x_axis_color = (255, 100, 0)
 y_axis_color = (100, 255, 0)
 
-radius = 2
+radius = 1
 done = False
-fps = 30
+fps = 300
 margin = 10
-draw_star_as_rect = True
-auto_size = True
+auto_size = False
 scale = 300
 center_x, center_y = 0, 0
 
@@ -60,7 +59,7 @@ for index, frame in enumerate(frames):
 
     print("progress: {}/{}".format(index, len(frames)))
 
-    screen.fill((255, 255, 255))
+    # screen.fill((255, 255, 255))
     pygame.draw.line(screen, x_axis_color, (0, width / 2), (width, width / 2))
     pygame.draw.line(screen, y_axis_color, (width / 2, 0), (width / 2, width))
 
@@ -72,11 +71,7 @@ for index, frame in enumerate(frames):
         else:
             center = (width / 2 + (star[0] - center_x) * scale,
                       width / 2 + (star[1] - center_y) * scale)
-        if draw_star_as_rect:
-            pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(list(map(int, center)), (radius, radius)))
-        else:
-            pygame.draw.rect(screen, (0, 0, 0), list(map(int, center)), radius)
-
+        pygame.draw.circle(screen, (0, 0, 0), list(map(int, center)), radius)
 
     pygame.display.flip()
     clock.tick(fps)

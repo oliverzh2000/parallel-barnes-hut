@@ -4,7 +4,6 @@
 
 #include <fstream>
 #include <limits>
-#include <random>
 
 #include "nbody_sim.h"
 #include "integrator/integrator.h"
@@ -23,37 +22,8 @@ void NBodySim::advanceSingleStep() {
 }
 
 void
-NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radiusStdDev, double avgMass,
-                                 double massStdDev, int seed) {
-    std::default_random_engine uniformRng{seed};
-    std::normal_distribution<double> radialDistanceGenerator{0, radiusStdDev};
-    std::normal_distribution<double> massGenerator{avgMass, massStdDev};
-
-    Model newGalaxy;
-
-    // 1) Randomly generate the positions of the stars.
-    for (int i = 0; i < n - 1; ++i) {
-        newGalaxy.addStar(
-                {Vec3D{0, radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng)},
-                 Vec3D{0, 0, 0},
-                 massGenerator(uniformRng)});
-    }
-
-    // 2) Add the supermassive black hole in the center.
-    double totalMass = 0;
-    for (const Star &star: newGalaxy.getStars()) {
-        totalMass += star.mass;
-    }
-    newGalaxy.addStar({Vec3D{0, 0, 0}, Vec3D{0, 0, 0}, totalMass});
-
-    // 3) Compute gravitational field at position of every star and set it's
-    //      velocity so that it is in uniform circular motion at time=0
-//    forceCalc->updateNetAccel(newGalaxy);
-//    for (int i = 0; i < n - 1; ++i) {
-//
-//    }
-    model.appendFrom(newGalaxy);
-}
+NBodySim::addSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radius, double radiusStdDev, double avgMass,
+                          double massStdDev) {}
 
 void NBodySim::addStar(Star star) {
     model.addStar(star);
@@ -113,7 +83,6 @@ void NBodySim::writeToFile(std::ostream &out) {
     out << n << std::endl;
     for (const Star &star: model.getStars()) {
         out.precision(std::numeric_limits<double>::max_digits10 + 2);
-        out << star.pos.x << " " << star.pos.y << " " << star.pos.z << " " << star.vel.x << " " << star.vel.y << " "
-            << star.vel.z << " " << star.mass << std::endl;
+        out << star.pos.x << " "<< star.pos.y << " " << star.pos.z << " " << star.vel.x << " " << star.vel.y << " " << star.vel.z << " " << star.mass << std::endl;
     }
 }
