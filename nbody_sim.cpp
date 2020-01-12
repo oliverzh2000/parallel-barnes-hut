@@ -34,7 +34,7 @@ NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double
     // 1) Randomly generate the positions of the stars.
     for (int i = 0; i < n - 1; ++i) {
         newGalaxy.addStar(
-                {Vec3D{0, radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng)},
+                {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng), 0},
                  Vec3D{0, 0, 0},
                  massGenerator(uniformRng)});
     }

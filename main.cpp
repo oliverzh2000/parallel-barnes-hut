@@ -18,13 +18,10 @@ int main() {
     std::string simDir = "sim_data/sim5/";
     std::ifstream inFile{simDir + "in.txt"};
     NBodySim sim = NBodySim::readFromFile(inFile);
-    sim.addXYPlaneSpiralGalaxy(100000, {}, {}, 100, 1, 0.1, 0);
-    int n = 1;
+    sim.addXYPlaneSpiralGalaxy(500000, {}, {}, 100, 1, 0.1, 0);
+    int n = 2;
     int nPerWrite = 1;
     bool writeToFile = false;
-
-//    std::ofstream outFile{simDir + "out-" + std::to_string(i) + ".txt"};
-//    sim.writeToFile(outFile);
 
     for (int i = 0; i < n; ++i) {
         sim.advanceSingleStep();
