@@ -20,7 +20,8 @@ class OctTree final {
     double length; // distance from center to any side of the OctTree bounding cube.
 
     class Node final {
-        Node *children[8];
+        // Extra level of indirection to save memory on leaf nodes that have no children.
+        Node **children;
         Vec3D centerOfMass;
         double totalMass;
 
@@ -48,15 +49,17 @@ class OctTree final {
         bool isLeaf() const;
 
         friend class ForceCalcBarnesHut;
+        friend class ForceCalcBarnesHutParallel;
+
     private:
         /// Return a int between 0 and 7 that uniquely identifies
         /// the octant that the given position is, relative to the given center.
-        int getOctant(const Vec3D &center, const Vec3D &pos) const;
+        static int getOctant(const Vec3D &center, const Vec3D &pos);
 
         /// Compute the center of the child octant Node that contains the given position.
-        Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) const;
+        static Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
 
-        bool isInBounds(const Vec3D &center, double length, const Vec3D &pos) const;
+        static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
     };
 
     Node root = Node{Vec3D{}};
@@ -65,6 +68,9 @@ public:
     explicit OctTree(const Model &model);
 
     friend class ForceCalcBarnesHut;
+    friend class ForceCalcBarnesHutParallel;
+
+    static std::tuple<Vec3D, double> getBoundingBox(const Model &model);
 };
 
 
