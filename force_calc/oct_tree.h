@@ -20,8 +20,7 @@ class OctTree final {
     double length; // distance from center to any side of the OctTree bounding cube.
 
     class Node final {
-        // Extra level of indirection to save memory on leaf nodes that have no children.
-        Node **children;
+        Node *children[8];
         Vec3D centerOfMass;
         double totalMass;
 

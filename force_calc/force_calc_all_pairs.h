@@ -7,7 +7,7 @@
 
 #include "force_calc.h"
 
-class ForceCalcAllPairs : public ForceCalc {
+class ForceCalcAllPairs final : public ForceCalc {
 public:
     explicit ForceCalcAllPairs(double gravConst, double softening);
 

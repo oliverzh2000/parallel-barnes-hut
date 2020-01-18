@@ -14,6 +14,7 @@
 #include "integrator/integrator_euler.h"
 #include "force_calc/force_calc_barnes_hut.h"
 #include "integrator/integrator_leapfrog.h"
+#include "force_calc/force_calc_barnes_hut_parallel.h"
 
 NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
         : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
@@ -46,12 +47,8 @@ NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double
     }
     newGalaxy.addStar({Vec3D{0, 0, 0}, Vec3D{0, 0, 0}, totalMass});
 
-    // 3) Compute gravitational field at position of every star and set it's
+    // TODO: 3) Compute gravitational field at position of every star and set it's
     //      velocity so that it is in uniform circular motion at time=0
-//    forceCalc->updateNetAccel(newGalaxy);
-//    for (int i = 0; i < n - 1; ++i) {
-//
-//    }
     model.appendFrom(newGalaxy);
 }
 
@@ -91,6 +88,10 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
                                           readParamFromName(in, "softening")};
     } else if (forceCalcName == "ForceCalcBarnesHut") {
         forceCalc = new ForceCalcBarnesHut{readParamFromName(in, "gravConst"),
+                                           readParamFromName(in, "softening"),
+                                           readParamFromName(in, "theta")};
+    } else if (forceCalcName == "ForceCalcBarnesHutParallel") {
+        forceCalc = new ForceCalcBarnesHutParallel{readParamFromName(in, "gravConst"),
                                            readParamFromName(in, "softening"),
                                            readParamFromName(in, "theta")};
     } else {

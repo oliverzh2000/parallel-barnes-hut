@@ -17,8 +17,8 @@ public:
     /// Builds and traverses an OctTree.
     void updateNetAccel(Model &model) const override;
 
-private:
-    Vec3D gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const;
+protected:
+    virtual Vec3D gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const;
 };
 
 

@@ -16,6 +16,7 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     }
     OctTree octTree{model};
 
+    // TODO: remove sleep (just a marker for profiling)
     std::cout << "done tree" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds{100});
 
@@ -33,24 +34,6 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     // - split 8 way normally (node::getoctant), then split the top 8 in half.
 
     int numThreads = 8;
-//    std::vector<int> octantStarIndices[numThreads];
-//    auto[center, length] = OctTree::getBoundingBox(model);
-//    bool placeInFirstHalfOctant = false;
-//    for (int i = 0; i < model.size(); ++i) {
-//        if (placeInFirstHalfOctant) {
-//            octantStarIndices[OctTree::Node::getOctant(center, model.pos(i))].emplace_back(i);
-//        } else {
-//            octantStarIndices[OctTree::Node::getOctant(center, model.pos(i)) + 8].emplace_back(i);
-//        }
-//        placeInFirstHalfOctant = !placeInFirstHalfOctant;
-//    }
-//
-//    int sum = 0;
-//    for (int i = 0; i < numThreads; ++i) {
-//        std::cout << "octantStarIndices[i].size(): " << octantStarIndices[i].size() << std::endl;
-//        sum += octantStarIndices[i].size();
-//    }
-//    std::cout << "sum: " << sum << std::endl;
 
     std::thread octantThreads[numThreads];
     for (int i = 0; i < numThreads; ++i) {

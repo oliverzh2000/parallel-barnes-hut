@@ -2,13 +2,24 @@
 // Created by Oliver Zhang on 2020-01-01.
 //
 
+#include <tuple>
 #include <limits>
 #include <algorithm>
 
 #include "oct_tree.h"
 
 OctTree::OctTree(const Model &model) {
-    // Compute the center and length first.
+    auto [center, length] = getBoundingBox(model);
+    this->center = center;
+    this->length = length;
+
+    // Insert all the positions and masses into the root tree node.
+    for (const Star &star: model.getStars()) {
+        root.addChild(center, length, star.pos, star.mass);
+    }
+}
+
+std::tuple<Vec3D, double> OctTree::getBoundingBox(const Model &model) {
     constexpr double minDouble = std::numeric_limits<double>::lowest();
     constexpr double maxDouble = std::numeric_limits<double>::max();
     Vec3D minCorner = {maxDouble, maxDouble, maxDouble};
@@ -22,13 +33,9 @@ OctTree::OctTree(const Model &model) {
         if (star.pos.y > maxCorner.y) maxCorner.y = star.pos.y;
         if (star.pos.z > maxCorner.z) maxCorner.z = star.pos.z;
     }
-    center = minCorner * 0.5 + maxCorner * 0.5;
-    length = std::max({(center - minCorner).x, (center - minCorner).y, (center - minCorner).z});
-
-    // Insert all the positions and masses into the root tree node.
-    for (const Star &star: model.getStars()) {
-        root.addChild(center, length, star.pos, star.mass);
-    }
+    Vec3D center = minCorner * 0.5 + maxCorner * 0.5;
+    double length = std::max({(center - minCorner).x, (center - minCorner).y, (center - minCorner).z});
+    return {center, length};
 }
 
 OctTree::Node::Node(const Vec3D &centerOfMass, double mass)
@@ -60,7 +67,7 @@ void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, doub
     totalMass += mass;
 }
 
-int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) const {
+int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) {
     int octant = 0;
     if (pos.x < center.x) octant += 1;
     if (pos.y < center.y) octant += 2;
@@ -68,7 +75,7 @@ int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) const {
     return octant;
 }
 
-Vec3D OctTree::Node::centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) const {
+Vec3D OctTree::Node::centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) {
     Vec3D newCenter = currentCenter;
     newCenter.x += (pos.x < currentCenter.x ? -0.5 : 0.5) * currentLength;
     newCenter.y += (pos.y < currentCenter.y ? -0.5 : 0.5) * currentLength;
@@ -76,7 +83,7 @@ Vec3D OctTree::Node::centerOfChildOctant(const Vec3D &currentCenter, double curr
     return newCenter;
 }
 
-bool OctTree::Node::isInBounds(const Vec3D &center, double length, const Vec3D &pos) const {
+bool OctTree::Node::isInBounds(const Vec3D &center, double length, const Vec3D &pos) {
     bool a = center.x - length <= pos.x && pos.x <= center.x + length;
     bool b = center.y - length <= pos.y && pos.y <= center.y + length;
     bool c = center.z - length <= pos.z && pos.z <= center.z + length;
@@ -89,7 +96,8 @@ bool OctTree::Node::isEmpty() const {
 
 bool OctTree::Node::isLeaf() const {
     // TODO: potential speedup.
-    // A boolean flag can be stored instead of linear time traversal through all children
+    // A boolean flag can be stored instead of linear time traversal through all children.
+    // - instead of the boolean flag, the children field is nullptr if and only if isLeaf.
     for (auto i : children) {
         if (i != nullptr) {
             return false;
