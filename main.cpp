@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+
 #include "nbody_sim.h"
 #include "star.h"
 #include "integrator/integrator.h"
@@ -11,15 +12,21 @@
 #include "integrator/integrator_euler.h"
 #include "force_calc/force_calc_all_pairs.h"
 #include "force_calc/force_calc_barnes_hut.h"
+#include "performance_stats/stopwatch.h"
 
 int main() {
     std::cout << "N-body Barnes-Hut simulation, by Oliver Zhang." << std::endl;
+    Stopwatch::setOutput(true);
 
     std::string simDir = "sim_data/sim5/";
     std::ifstream inFile{simDir + "in.txt"};
     NBodySim sim = NBodySim::readFromFile(inFile);
+
+    Stopwatch s1 = Stopwatch::createAndStart("create galaxy");
     sim.addXYPlaneSpiralGalaxy(500000, {}, {}, 100, 1, 0.1, 0);
-    int n = 2;
+    s1.stopAndOutput();
+
+    int n = 1;
     int nPerWrite = 1;
     bool writeToFile = false;
 
@@ -30,10 +37,9 @@ int main() {
                 std::ofstream outFile{simDir + "out-" + std::to_string(i) + ".txt"};
                 sim.writeToFile(outFile);
             }
-            std::cout << i / double(n) * 100 << std::endl;
+            std::cout << "% progress: " << (i + 1) / double(n) * 100 << std::endl;
         }
     }
 
-
-    std::cout << "hello" << std::endl;
+    std::cout << "done." << std::endl;
 }

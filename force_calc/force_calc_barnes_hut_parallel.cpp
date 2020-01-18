@@ -16,10 +16,6 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     }
     OctTree octTree{model};
 
-    // TODO: remove sleep (just a marker for profiling)
-    std::cout << "done tree" << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds{100});
-
     // If running on 8 core CPU:
     // then partition space into 8 octants and compute acc on each octant with its own thread.
     // TODO: support arbitrary number of cores.
