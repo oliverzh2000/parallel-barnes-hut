@@ -90,15 +90,6 @@ bool OctTree::Node::isEmpty() const {
 bool OctTree::Node::isLeaf() const {
     // TODO: potential speedup.
     // A boolean flag can be stored instead of linear time traversal through all children
-//    return children[0] == nullptr &&
-//           children[1] == nullptr &&
-//           children[2] == nullptr &&
-//           children[3] == nullptr &&
-//           children[4] == nullptr &&
-//           children[5] == nullptr &&
-//           children[6] == nullptr &&
-//           children[7] == nullptr;
-
     for (auto i : children) {
         if (i != nullptr) {
             return false;
