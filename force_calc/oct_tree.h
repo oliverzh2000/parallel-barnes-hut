@@ -20,7 +20,8 @@ class OctTree final {
     double length; // distance from center to any side of the OctTree bounding cube.
 
     class Node final {
-        Node *children[8];
+        // Extra level of indirection so that children can be null when there are 0 children, to save memory.
+        Node **children;
         Vec3D centerOfMass;
         double totalMass;
 
@@ -41,7 +42,7 @@ class OctTree final {
         void addChild(const Vec3D &center, double length, Vec3D pos, double mass);
 
         /// A node is considered empty when total mass is 0.
-        /// Note: all empty Nodes are leaves.
+        /// Note: If all star masses are positive, then all empty Nodes are also leaves.
         bool isEmpty() const;
 
         /// A node is considered leaf if all children are nullptr.
@@ -64,6 +65,7 @@ class OctTree final {
     Node root = Node{Vec3D{}};
 
 public:
+
     explicit OctTree(const Model &model);
 
     friend class ForceCalcBarnesHut;

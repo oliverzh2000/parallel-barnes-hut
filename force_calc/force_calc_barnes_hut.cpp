@@ -27,9 +27,9 @@ Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double len
         return gravFieldDueToSingleObject(node.centerOfMass, node.totalMass, pos);
     } else {
         Vec3D accSum;
-        for (const OctTree::Node *child : node.children) {
-            if (child != nullptr) {
-                accSum += gravFieldViaTree(*child, length * 0.5, pos);
+        for (int i = 0; i < 8; ++i) {
+            if (node.children[i] != nullptr) {
+                accSum += gravFieldViaTree(*node.children[i], length * 0.5, pos);
             }
         }
         return accSum;

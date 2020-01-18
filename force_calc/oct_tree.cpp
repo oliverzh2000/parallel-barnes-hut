@@ -39,21 +39,26 @@ std::tuple<Vec3D, double> OctTree::getBoundingBox(const Model &model) {
 }
 
 OctTree::Node::Node(const Vec3D &centerOfMass, double mass)
-        : children(), centerOfMass{centerOfMass}, totalMass{mass} {}
+        : children{nullptr}, centerOfMass{centerOfMass}, totalMass{mass} {}
 
 OctTree::Node::~Node() {
-    for (auto &i : children) {
-        delete i;
+    if (!isLeaf()) {
+        for (int i = 0; i < 8; ++i) {
+            delete children[i];
+        }
     }
 }
 
 void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, double mass) {
 //    assert (isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
+    if (isLeaf()) {
+        children = new Node *[8]();
+    }
     if (isEmpty()) {
         children[octant] = new Node{pos, mass};
-        centerOfMass = (centerOfMass * totalMass + pos * mass) * (1 / (totalMass + mass));
-        totalMass += mass;
+        centerOfMass = pos;
+        totalMass = mass;
         return;
     } else if (isLeaf()) {
         children[getOctant(center, centerOfMass)] = new Node{centerOfMass, totalMass};
@@ -95,14 +100,5 @@ bool OctTree::Node::isEmpty() const {
 }
 
 bool OctTree::Node::isLeaf() const {
-    // TODO: potential speedup.
-    // A boolean flag can be stored instead of linear time traversal through all children.
-    // - instead of the boolean flag, the children field is nullptr if and only if isLeaf.
-    for (auto i : children) {
-        if (i != nullptr) {
-            return false;
-        }
-    }
-    return true;
+    return children == nullptr;
 }
-
