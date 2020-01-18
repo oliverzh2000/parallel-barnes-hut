@@ -14,21 +14,17 @@
 #include "force_calc/force_calc_barnes_hut.h"
 #include "performance_stats/stopwatch.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     std::cout << "N-body Barnes-Hut simulation, by Oliver Zhang." << std::endl;
-    Stopwatch::setOutput(true);
-
     std::string simDir = "sim_data/sim5/";
-    std::ifstream inFile{simDir + "in.txt"};
-    NBodySim sim = NBodySim::readFromFile(inFile);
-
-    Stopwatch s1 = Stopwatch::createAndStart("create galaxy");
-    sim.addXYPlaneSpiralGalaxy(500000, {}, {}, 100, 1, 0.1, 0);
-    s1.stopAndOutput();
-
     int n = 1;
     int nPerWrite = 1;
     bool writeToFile = false;
+
+    auto s1 = Stopwatch::createAndStart("init");
+    std::ifstream inFile{simDir + "in.txt"};
+    NBodySim sim = NBodySim::readFromFile(inFile);
+    s1.stopAndOutput();
 
     for (int i = 0; i < n; ++i) {
         sim.advanceSingleStep();
@@ -37,7 +33,7 @@ int main() {
                 std::ofstream outFile{simDir + "out-" + std::to_string(i) + ".txt"};
                 sim.writeToFile(outFile);
             }
-            std::cout << "% progress: " << (i + 1) / double(n) * 100 << std::endl;
+            std::cout << "% Progress: " << (i + 1) / double(n) * 100 << std::endl;
         }
     }
 

@@ -30,13 +30,17 @@ public:
 
     void advanceSingleStep();
 
-    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radiusStdDev, double avgMass,
+    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass,
                                     double massStdDev, int seed);
 
     void addStar(Star star);
 
 private:
-    double static readParamFromName(std::istream &in, std::string expectedName);
+    template <typename T>
+    static T readParamByName(std::istream &in, std::string expectedName);
+    // TODO: merge the separate Vec3D method if possible.
+    static Vec3D readVec3DParamByName(std::istream &in, std::string expectedName);
+    static void verifyParamName(std::istream &in, std::string expectedName);
 };
 
 

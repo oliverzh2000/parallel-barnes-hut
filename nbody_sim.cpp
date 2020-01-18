@@ -15,6 +15,7 @@
 #include "force_calc/force_calc_barnes_hut.h"
 #include "integrator/integrator_leapfrog.h"
 #include "force_calc/force_calc_barnes_hut_parallel.h"
+#include "vec3d.h"
 
 NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
         : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
@@ -24,10 +25,10 @@ void NBodySim::advanceSingleStep() {
 }
 
 void
-NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radiusStdDev, double avgMass,
+NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass,
                                  double massStdDev, int seed) {
     std::default_random_engine uniformRng{seed};
-    std::normal_distribution<double> radialDistanceGenerator{0, radiusStdDev};
+    std::normal_distribution<double> radialDistanceGenerator{0, radialStdDev};
     std::normal_distribution<double> massGenerator{avgMass, massStdDev};
 
     Model newGalaxy;
@@ -35,7 +36,9 @@ NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double
     // 1) Randomly generate the positions of the stars.
     for (int i = 0; i < n - 1; ++i) {
         newGalaxy.addStar(
-                {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng), 0},
+                // TODO: make this a disk after debugging done.
+                {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng),
+                       radialDistanceGenerator(uniformRng)},
                  Vec3D{0, 0, 0},
                  massGenerator(uniformRng)});
     }
@@ -56,55 +59,83 @@ void NBodySim::addStar(Star star) {
     model.addStar(star);
 }
 
-double NBodySim::readParamFromName(std::istream &in, std::string expectedName) {
-    std::string name;
-    in >> name;
-    if (name != expectedName) {
-        throw std::runtime_error{expectedName + " missing or incomplete"};
-    }
-    double value;
+template<typename T>
+T NBodySim::readParamByName(std::istream &in, std::string expectedName) {
+    verifyParamName(in, expectedName);
+    T value;
     in >> value;
     return value;
 }
 
+Vec3D NBodySim::readVec3DParamByName(std::istream &in, std::string expectedName) {
+    verifyParamName(in, expectedName);
+    return Vec3D{readParamByName<double>(in, "x"),
+                 readParamByName<double>(in, "y"),
+                 readParamByName<double>(in, "z")};
+}
+
+
+void NBodySim::verifyParamName(std::istream &in, std::string expectedName) {
+    std::string nameWithColon;
+    in >> nameWithColon;
+    if (nameWithColon.substr(0, nameWithColon.size() - 1) != expectedName) {
+        throw std::runtime_error{expectedName + " missing or incomplete."};
+    }
+    if (nameWithColon.back() != ':') {
+        throw std::runtime_error{expectedName + " not followed by ':'."};
+    }
+}
+
 NBodySim NBodySim::readFromFile(std::istream &in) {
-    // TODO: Replace this hardcoded parsing with json or at least make a dedicated parser and serializer.
+    // TODO: Replace this hardcoded parsing with json or something better.
     Integrator *integrator;
-    std::string integratorName;
-    in >> integratorName;
-    if (integratorName == "IntegratorEuler") {
-        integrator = new IntegratorEuler(readParamFromName(in, "timestep"));
-    } else if (integratorName == "IntegratorLeapfrog") {
-        integrator = new IntegratorLeapfrog(readParamFromName(in, "timestep"));
+    auto integratorType = readParamByName<std::string>(in, "integratorType");
+    if (integratorType == "IntegratorEuler") {
+        integrator = new IntegratorEuler(readParamByName<double>(in, "timestep"));
+    } else if (integratorType == "IntegratorLeapfrog") {
+        integrator = new IntegratorLeapfrog(readParamByName<double>(in, "timestep"));
     } else {
         throw std::runtime_error{"invalid integrator name"};
     }
 
     ForceCalc *forceCalc;
-    std::string forceCalcName;
-    in >> forceCalcName;
-    if (forceCalcName == "ForceCalcAllPairs") {
-        forceCalc = new ForceCalcAllPairs{readParamFromName(in, "gravConst"),
-                                          readParamFromName(in, "softening")};
-    } else if (forceCalcName == "ForceCalcBarnesHut") {
-        forceCalc = new ForceCalcBarnesHut{readParamFromName(in, "gravConst"),
-                                           readParamFromName(in, "softening"),
-                                           readParamFromName(in, "theta")};
-    } else if (forceCalcName == "ForceCalcBarnesHutParallel") {
-        forceCalc = new ForceCalcBarnesHutParallel{readParamFromName(in, "gravConst"),
-                                           readParamFromName(in, "softening"),
-                                           readParamFromName(in, "theta")};
+    auto forceCalcType = readParamByName<std::string>(in, "forceCalcType");
+    if (forceCalcType == "ForceCalcAllPairs") {
+        auto gravConst = readParamByName<double>(in, "gravConst");
+        auto softening = readParamByName<double>(in, "softening");
+        forceCalc = new ForceCalcAllPairs{gravConst, softening};
+    } else if (forceCalcType == "ForceCalcBarnesHut") {
+        auto gravConst = readParamByName<double>(in, "gravConst");
+        auto softening = readParamByName<double>(in, "softening");
+        auto theta = readParamByName<double>(in, "theta");
+        forceCalc = new ForceCalcBarnesHut{gravConst, softening, theta};
+    } else if (forceCalcType == "ForceCalcBarnesHutParallel") {
+        auto gravConst = readParamByName<double>(in, "gravConst");
+        auto softening = readParamByName<double>(in, "softening");
+        auto theta = readParamByName<double>(in, "theta");
+        forceCalc = new ForceCalcBarnesHutParallel{gravConst, softening, theta};
     } else {
         throw std::runtime_error{"invalid forceCalc name"};
     }
 
     NBodySim sim = NBodySim{integrator, forceCalc};
-    int n;
-    in >> n;
-    for (int i = 0; i < n; ++i) {
-        double posX, posY, posZ, velX, velY, velZ, mass;
-        in >> posX >> posY >> posZ >> velX >> velY >> velZ >> mass;
-        sim.addStar({{posX, posY, posZ}, {velX, velY, velZ}, mass});
+    auto starsInitMode = readParamByName<std::string>(in, "starsInitMode");
+    if (starsInitMode == "readStars") {
+        auto n = readParamByName<int>(in, "n");
+        for (int i = 0; i < n; ++i) {
+            double posX, posY, posZ, velX, velY, velZ, mass;
+            in >> posX >> posY >> posZ >> velX >> velY >> velZ >> mass;
+            sim.addStar({{posX, posY, posZ}, {velX, velY, velZ}, mass});
+        }
+    } else if (starsInitMode == "createSpiralGalaxy") {
+        auto n = readParamByName<int>(in, "n");
+        auto centerPos = readVec3DParamByName(in, "centerPos");
+        auto centerVel = readVec3DParamByName(in, "centerVel");
+        auto radialStdDev = readParamByName<double>(in, "radialStdDev");
+        auto avgMass = readParamByName<double>(in, "avgMass");
+        auto avgMassStdDev = readParamByName<double>(in, "avgMassStdDev");
+        auto seed = readParamByName<int>(in, "seed");
+        sim.addXYPlaneSpiralGalaxy(n, centerPos, centerVel, radialStdDev, avgMass, avgMassStdDev, seed);
     }
     return sim;
 }
