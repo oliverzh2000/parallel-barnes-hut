@@ -29,4 +29,4 @@ add_executable(3d-barnes-hut
         integrator/integrator_leapfrog.cpp
         integrator/integrator_leapfrog.h
         force_calc/force_calc_barnes_hut_parallel.cpp
-        force_calc/force_calc_barnes_hut_parallel.h)
+        force_calc/force_calc_barnes_hut_parallel.h performance_stats/stopwatch.cpp performance_stats/stopwatch.h)
