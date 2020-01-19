@@ -36,7 +36,10 @@ public:
     void appendFrom(const Model &other);
 
     /// Get the number of Stars this Model currently holds
-    size_t size() const;
+    int size() const;
+
+    void serialize(std::ostream &out);
+    void deSerialize(std::istream &in);
 };
 
 

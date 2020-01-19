@@ -2,20 +2,20 @@
 // Created by Oliver Zhang on 2019-12-20.
 //
 
+#include "nbody_sim.h"
+
+#include <utility>
 #include <fstream>
 #include <limits>
 #include <random>
 
-#include "nbody_sim.h"
 #include "../integrator/integrator.h"
 #include "../force_calc/force_calc.h"
-#include "star.h"
 #include "../force_calc/force_calc_all_pairs.h"
 #include "../integrator/integrator_euler.h"
 #include "../force_calc/force_calc_barnes_hut.h"
 #include "../integrator/integrator_leapfrog.h"
 #include "../force_calc/force_calc_barnes_hut_parallel.h"
-#include "vec3d.h"
 
 NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
         : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
@@ -59,34 +59,9 @@ void NBodySim::addStar(Star star) {
     model.addStar(star);
 }
 
-template<typename T>
-T NBodySim::readParamByName(std::istream &in, std::string expectedName) {
-    verifyParamName(in, expectedName);
-    T value;
-    in >> value;
-    return value;
-}
 
-Vec3D NBodySim::readVec3DParamByName(std::istream &in, std::string expectedName) {
-    verifyParamName(in, expectedName);
-    return Vec3D{readParamByName<double>(in, "x"),
-                 readParamByName<double>(in, "y"),
-                 readParamByName<double>(in, "z")};
-}
-
-
-void NBodySim::verifyParamName(std::istream &in, std::string expectedName) {
-    std::string nameWithColon;
-    in >> nameWithColon;
-    if (nameWithColon.substr(0, nameWithColon.size() - 1) != expectedName) {
-        throw std::runtime_error{expectedName + " missing or incomplete."};
-    }
-    if (nameWithColon.back() != ':') {
-        throw std::runtime_error{expectedName + " not followed by ':'."};
-    }
-}
-
-NBodySim NBodySim::readFromFile(std::istream &in) {
+NBodySim NBodySim::readFromFile(const std::string &simDir) {
+    std::ifstream in{simDir + "\\init.txt"};
     // TODO: Replace this hardcoded parsing with json or something better.
     Integrator *integrator;
     auto integratorType = readParamByName<std::string>(in, "integratorType");
@@ -119,14 +94,45 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
     }
 
     NBodySim sim = NBodySim{integrator, forceCalc};
+
     auto starsInitMode = readParamByName<std::string>(in, "starsInitMode");
-    if (starsInitMode == "readStars") {
+    if (starsInitMode == "readStarsInline") {
         auto n = readParamByName<int>(in, "n");
         for (int i = 0; i < n; ++i) {
             double posX, posY, posZ, velX, velY, velZ, mass;
             in >> posX >> posY >> posZ >> velX >> velY >> velZ >> mass;
             sim.addStar({{posX, posY, posZ}, {velX, velY, velZ}, mass});
         }
+    } else if (starsInitMode == "readStarsFromLatestBinaryFrame") {
+#if 0
+        // TODO: Add this back in once I am able to use the <filesystem> header properly.
+        int latestFameIndex = 0;
+        std::filesystem::path latestFile;
+        for (const auto &entry: std::filesystem::directory_iterator("frames")) {
+            if (entry.is_regular_file()) {
+                std::string filename = entry.path().string();
+                if (entry.path().extension() == ".data" && filename.substr(0, 5) == "frame-") {
+                    // At this point, filename is of the form: 'frame-0123.data',
+                    // need to extract just the 0123 part.
+                    int currentFrameIndex = std::stoi(filename.substr(6, filename.size() - 5));
+                    if (latestFameIndex < currentFrameIndex) {
+                        latestFameIndex = currentFrameIndex;
+                        latestFile = entry.path();
+                    }
+                } else {
+                    throw std::runtime_error{"frame file does not begin with 'frame-' and end with '.data' extension."};
+                }
+            }
+        }
+        std::ifstream frameIfs{latestFile.string()};
+        sim.model.deSerialize(frameIfs);
+#endif
+        std::ifstream frameNumberIfs{simDir + "\\latest-frame-index.txt"};
+        int latestBinaryFrameNumber;
+        frameNumberIfs >> latestBinaryFrameNumber;
+        std::ifstream frameIfs{simDir + "\\frames\\frame-" + std::to_string(latestBinaryFrameNumber) + ".data"};
+        sim.model.deSerialize(frameIfs);
+        sim.integrator->setTimestepCount(latestBinaryFrameNumber);
     } else if (starsInitMode == "createSpiralGalaxy") {
         auto n = readParamByName<int>(in, "n");
         auto centerPos = readVec3DParamByName(in, "centerPos");
@@ -140,12 +146,54 @@ NBodySim NBodySim::readFromFile(std::istream &in) {
     return sim;
 }
 
-void NBodySim::writeToFile(std::ostream &out) {
-    unsigned long long int n = model.getStars().size();
-    out << n << std::endl;
-    for (const Star &star: model.getStars()) {
-        out.precision(std::numeric_limits<double>::max_digits10 + 2);
-        out << star.pos.x << " " << star.pos.y << " " << star.pos.z << " " << star.vel.x << " " << star.vel.y << " "
-            << star.vel.z << " " << star.mass << std::endl;
+void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadable) {
+    std::ofstream frameOfs{simDir + "\\frames\\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+    model.serialize(frameOfs);
+    if (alsoWriteHumanReadable) {
+        std::ofstream humanReadableFrameOfs{
+                simDir + "\\hr-frames\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+        unsigned long long int n = model.getStars().size();
+        humanReadableFrameOfs << n << std::endl;
+        for (const Star &star: model.getStars()) {
+            humanReadableFrameOfs.precision(std::numeric_limits<double>::max_digits10 + 2);
+            humanReadableFrameOfs << star.pos.x << " " << star.pos.y << " " << star.pos.z << " "
+                                  << star.vel.x << " " << star.vel.y << " " << star.vel.z << " "
+                                  << star.mass << std::endl;
+        }
+    }
+    std::ofstream latestFrameIndexOfs{simDir + "\\latest-frame-index.txt"};
+    latestFrameIndexOfs << integrator->getTimestepCount();
+}
+
+template<typename T>
+T NBodySim::readParamByName(std::istream &in, std::__cxx11::string expectedName) {
+    verifyParamName(in, move(expectedName));
+    T value;
+    in >> value;
+    return value;
+}
+
+Vec3D NBodySim::readVec3DParamByName(std::istream &in, std::__cxx11::string expectedName) {
+    verifyParamName(in, move(expectedName));
+    return Vec3D{readParamByName<double>(in, "x"),
+                 readParamByName<double>(in, "y"),
+                 readParamByName<double>(in, "z")};
+}
+
+template<typename T>
+void NBodySim::writeParamWithName(std::ostream &out, std::__cxx11::string name, T value, int indentLevel) {
+    int charsPerIndent = 4;
+    out << std::__cxx11::string(charsPerIndent * indentLevel, ' ');
+    out << name << ": " << value << std::endl;
+}
+
+void NBodySim::verifyParamName(std::istream &in, std::__cxx11::string expectedName) {
+    std::__cxx11::string nameWithColon;
+    in >> nameWithColon;
+    if (nameWithColon.substr(0, nameWithColon.size() - 1) != expectedName) {
+        throw std::runtime_error{expectedName + " missing or incomplete."};
+    }
+    if (nameWithColon.back() != ':') {
+        throw std::runtime_error{expectedName + " not followed by ':'."};
     }
 }

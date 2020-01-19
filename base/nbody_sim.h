@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "model.h"
+#include "../base/model.h"
 
 class Vec3D;
 class Integrator;
@@ -24,9 +25,9 @@ class NBodySim final {
 public:
     NBodySim(Integrator *integrator, ForceCalc *forceCalc);
 
-    static NBodySim readFromFile(std::istream &in);
+    static NBodySim readFromFile(const std::string &simDir);
 
-    void writeToFile(std::ostream &out);
+    void writeToFile(const std::string &simDir, bool alsoWriteHumanReadable);
 
     void advanceSingleStep();
 
@@ -38,8 +39,13 @@ public:
 private:
     template <typename T>
     static T readParamByName(std::istream &in, std::string expectedName);
+
     // TODO: merge the separate Vec3D method if possible.
     static Vec3D readVec3DParamByName(std::istream &in, std::string expectedName);
+
+    template <typename T>
+    static void writeParamWithName(std::ostream &out, std::string name, T value, int indentLevel);
+
     static void verifyParamName(std::istream &in, std::string expectedName);
 };
 

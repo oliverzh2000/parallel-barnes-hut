@@ -11,6 +11,8 @@ class IntegratorLeapfrog : public Integrator {
 public:
     explicit IntegratorLeapfrog(double timestep);
 
+    IntegratorLeapfrog(double timestep, int timestepCount);
+
     void advanceSingleStep(const ForceCalc &forceCalc, Model &model) override;
 };
 

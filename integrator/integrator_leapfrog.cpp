@@ -5,14 +5,18 @@
 #include "integrator_leapfrog.h"
 #include "../force_calc/force_calc.h"
 #include "../base/model.h"
-#include "../performance_stats/stopwatch.h"
+#include "../utils/stopwatch.h"
 
-IntegratorLeapfrog::IntegratorLeapfrog(double timestep) : Integrator(timestep) {}
+IntegratorLeapfrog::IntegratorLeapfrog(double timestep)
+        : Integrator(timestep) {}
+
+IntegratorLeapfrog::IntegratorLeapfrog(double timestep, int timestepCount)
+        : Integrator(timestep, timestepCount) {}
 
 void IntegratorLeapfrog::advanceSingleStep(const ForceCalc &forceCalc, Model &model) {
     auto s1 = Stopwatch::createAndStart("pos += vel *dt / 2");
     for (int i = 0; i < model.size(); ++i) {
-        model.pos(i) += model.vel(i) * timestep  * 0.5;
+        model.pos(i) += model.vel(i) * timestep * 0.5;
     }
     s1.stopAndOutput();
 
@@ -28,7 +32,8 @@ void IntegratorLeapfrog::advanceSingleStep(const ForceCalc &forceCalc, Model &mo
 
     auto s4 = Stopwatch::createAndStart("pos += vel *dt / 2");
     for (int i = 0; i < model.size(); ++i) {
-        model.pos(i) += model.vel(i) * timestep  * 0.5;
+        model.pos(i) += model.vel(i) * timestep * 0.5;
     }
     s4.stopAndOutput();
+    timestepCount++;
 }

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(bh_sim)
 
 set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g")
@@ -29,4 +30,7 @@ add_executable(3d-barnes-hut
         integrator/integrator_leapfrog.cpp
         integrator/integrator_leapfrog.h
         force_calc/force_calc_barnes_hut_parallel.cpp
-        force_calc/force_calc_barnes_hut_parallel.h performance_stats/stopwatch.cpp performance_stats/stopwatch.h memory_allocator/linear_allocator.cpp memory_allocator/linear_allocator.h)
+        force_calc/force_calc_barnes_hut_parallel.h
+        utils/stopwatch.cpp
+        utils/stopwatch.h)
+
