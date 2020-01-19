@@ -24,63 +24,84 @@ int main(int argc, char *argv[]) {
     bool silent = false;
 
     bool showHelp = false;
+    bool showVersion = false;
     bool failedArgParse = false;
-    std::string invalidFlag;
+    std::string unrecognizedFlag;
     for (int i = 1; i < argc; ++i) {
         if (std::string{argv[i]} == "--sim-directory") {
             simDir = argv[i + 1];
             i++;
+            continue;
         } else if (std::string{argv[i]} == "--steps") {
             n = std::stoi(argv[i + 1]);
             i++;
+            continue;
         } else if (std::string{argv[i]} == "--verbose") {
             verbose = true;
-        } else if (std::string{argv[i]} == "--slient") {
+            continue;
+        } else if (std::string{argv[i]} == "--silent") {
             silent = true;
+            continue;
         } else if (std::string{argv[i]} == "--help") {
             showHelp = true;
+            continue;
         } else if (std::string{argv[i]} == "--version") {
-            std::cout << "version=1.0.0" << std::endl;
-            return 0;
+            showVersion = true;
+            continue;
         } else {
             failedArgParse = true;
-            invalidFlag = std::string{argv[i]};
+            unrecognizedFlag = std::string{argv[i]};
             break;
         }
     }
-
-    // Required switches.
-    if (simDir.empty()) {
-        std::cout << "fatal error: no simulation directory" << std::endl;
-        failedArgParse = true;
-    }
-
     if (showHelp) {
         std::cout << "Help menu not implemented." << std::endl;
+        return 0;
+    }
+    if (showVersion) {
+        std::cout << "Version=1.0.0" << std::endl;
+        return 0;
+    }
+    if (n < 1) {
+        std::cout << "Fatal error: must run for at least one iteration step (use --steps to specify)" << std::endl;
+        failedArgParse = true;
+    }
+    // Required switches.
+    if (simDir.empty()) {
+        std::cout << "Fatal error: no simulation directory (use --sim-directory to specify)" << std::endl;
+        failedArgParse = true;
     }
     if (failedArgParse) {
-        if (!invalidFlag.empty()) {
-            std::cout << "N-body: unrecognized command line option: " << invalidFlag << std::endl;
+        if (!unrecognizedFlag.empty()) {
+            std::cout << "Unrecognized command line option: " << unrecognizedFlag << std::endl;
         }
-        std::cout << "try --help for more information" << std::endl;
+        std::cout << "Try --help for more information" << std::endl;
         return 1;
     }
 
     Stopwatch::setDoOutput(verbose);
 
-    auto s1 = Stopwatch::createAndStart("init");
-    NBodySim sim = NBodySim::readFromFile(simDir);
-    s1.stopAndOutput();
+    std::unique_ptr<NBodySim> sim;
+    try {
+        auto s1 = Stopwatch::createAndStart("init");
+        sim = std::make_unique<NBodySim>(NBodySim::readFromFile(simDir));
+        s1.stopAndOutput();
+    } catch (const std::runtime_error &e) {
+        std::cout << "Fatal error: parsing simulation init file" << std::endl;
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
 
     for (int i = 0; i < n; ++i) {
-        sim.advanceSingleStep();
+        sim->advanceSingleStep();
         if (i % nPerWrite == 0) {
-            sim.writeToFile(simDir, false);
+            sim->writeToFile(simDir, false);
             if (!silent) {
                 std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(n) << " (" << (i + 1) / double(n) * 100 << "%)" << std::endl;
             }
         }
     }
-
-    std::cout << "done." << std::endl;
+    if (!silent) {
+        std::cout << "\nDone." << std::endl;
+    }
 }
