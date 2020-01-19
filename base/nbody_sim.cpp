@@ -7,14 +7,14 @@
 #include <random>
 
 #include "nbody_sim.h"
-#include "integrator/integrator.h"
-#include "force_calc/force_calc.h"
+#include "../integrator/integrator.h"
+#include "../force_calc/force_calc.h"
 #include "star.h"
-#include "force_calc/force_calc_all_pairs.h"
-#include "integrator/integrator_euler.h"
-#include "force_calc/force_calc_barnes_hut.h"
-#include "integrator/integrator_leapfrog.h"
-#include "force_calc/force_calc_barnes_hut_parallel.h"
+#include "../force_calc/force_calc_all_pairs.h"
+#include "../integrator/integrator_euler.h"
+#include "../force_calc/force_calc_barnes_hut.h"
+#include "../integrator/integrator_leapfrog.h"
+#include "../force_calc/force_calc_barnes_hut_parallel.h"
 #include "vec3d.h"
 
 NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)

@@ -4,7 +4,7 @@
 
 #include "integrator_leapfrog.h"
 #include "../force_calc/force_calc.h"
-#include "../model.h"
+#include "../base/model.h"
 #include "../performance_stats/stopwatch.h"
 
 IntegratorLeapfrog::IntegratorLeapfrog(double timestep) : Integrator(timestep) {}

@@ -5,8 +5,8 @@
 #ifndef BH_SIM_FORCECALCULATOR_H
 #define BH_SIM_FORCECALCULATOR_H
 
-#include "../vec3d.h"
-#include "../star.h"
+#include "../base/vec3d.h"
+#include "../base/star.h"
 
 class Model;
 

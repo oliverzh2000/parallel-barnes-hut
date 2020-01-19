@@ -6,9 +6,9 @@
 #define BH_SIM_OCTTREE_H
 
 #include <vector>
-#include "../vec3d.h"
-#include "../star.h"
-#include "../model.h"
+#include "../base/vec3d.h"
+#include "../base/star.h"
+#include "../base/model.h"
 
 /**
  * OctTree data structure to enable efficient force computation with Barnes-Hut algorithm

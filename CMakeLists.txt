@@ -7,17 +7,17 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g")
 
 add_executable(3d-barnes-hut
-        main.cpp
-        model.cpp
-        model.h
-        nbody_sim.cpp
-        nbody_sim.h
+        base/main.cpp
+        base/model.cpp
+        base/model.h
+        base/nbody_sim.cpp
+        base/nbody_sim.h
         integrator/integrator.cpp
         integrator/integrator.h
-        vec3d.cpp vec3d.h
+        base/vec3d.cpp base/vec3d.h
         force_calc/force_calc.cpp
         force_calc/force_calc.h
-        star.cpp star.h
+        base/star.cpp base/star.h
         integrator/integrator_euler.cpp
         integrator/integrator_euler.h
         force_calc/force_calc_all_pairs.cpp
@@ -29,4 +29,4 @@ add_executable(3d-barnes-hut
         integrator/integrator_leapfrog.cpp
         integrator/integrator_leapfrog.h
         force_calc/force_calc_barnes_hut_parallel.cpp
-        force_calc/force_calc_barnes_hut_parallel.h performance_stats/stopwatch.cpp performance_stats/stopwatch.h)
+        force_calc/force_calc_barnes_hut_parallel.h performance_stats/stopwatch.cpp performance_stats/stopwatch.h memory_allocator/linear_allocator.cpp memory_allocator/linear_allocator.h)

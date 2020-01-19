@@ -7,15 +7,16 @@
 
 #include "nbody_sim.h"
 #include "star.h"
-#include "integrator/integrator.h"
-#include "force_calc/force_calc.h"
-#include "integrator/integrator_euler.h"
-#include "force_calc/force_calc_all_pairs.h"
-#include "force_calc/force_calc_barnes_hut.h"
-#include "performance_stats/stopwatch.h"
+#include "../integrator/integrator.h"
+#include "../force_calc/force_calc.h"
+#include "../integrator/integrator_euler.h"
+#include "../force_calc/force_calc_all_pairs.h"
+#include "../force_calc/force_calc_barnes_hut.h"
+#include "../performance_stats/stopwatch.h"
 
 int main(int argc, char *argv[]) {
-    std::cout << "N-body Barnes-Hut simulation, by Oliver Zhang." << std::endl;
+    std::cout << "3D N-body simulation with Barnes-Hut, by Oliver Zhang." << std::endl;
+    
     std::string simDir = "sim_data/sim5/";
     int n = 1;
     int nPerWrite = 1;
