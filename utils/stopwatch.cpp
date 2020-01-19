@@ -22,7 +22,7 @@ Stopwatch Stopwatch::createAndStart(std::string name) {
 Stopwatch::Stopwatch(std::string name)
         : name{std::move(name)} {}
 
-void Stopwatch::setOutput(bool doOutput) {
+void Stopwatch::setDoOutput(bool doOutput) {
     Stopwatch::doOutput = doOutput;
 }
 
