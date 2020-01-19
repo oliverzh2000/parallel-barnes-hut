@@ -7,7 +7,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g")
 
-add_executable(3d-barnes-hut
+add_executable(nbody
         base/main.cpp
         base/model.cpp
         base/model.h
