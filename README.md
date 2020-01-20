@@ -8,8 +8,8 @@ CUDA GPU acceleration, simulation viewer, simulation data compression, and optim
 # Getting Started
 1. Checkout the repo from github, and build the project with `make` (Windows build script coming soon).
 ```shell
-$ git clone https://github.com/oliverzh2000/3d-barnes-hut.git
-$ cd 3d-barnes-hut
+$ git clone https://github.com/oliverzh2000/parallel-barnes-hut.git
+$ cd parallel-barnes-hut
 $ make
 $ nbody --help
 ```
