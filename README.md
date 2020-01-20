@@ -5,9 +5,12 @@ A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](ht
 
 CUDA GPU acceleration, simulation viewer, simulation data compression, and optimized support for other compilers (non-GCC) coming soon. See [Roadmap](#roadmap)
 
+# Gallery
+Coming soon. Simulation in progress on Google Compute Engine.
+
 # Getting Started
 1. Checkout the repo from github, and build the project with `make` (Windows build script coming soon).
-```shell
+```bash
 $ git clone https://github.com/oliverzh2000/parallel-barnes-hut.git
 $ cd parallel-barnes-hut
 $ make
@@ -118,7 +121,7 @@ starsInitMode: readStarsInline
 # Recommended Parameter Values
 | Parameter        | Recommended value           | Reason  |
 | :------------- |:-------------| :-----|
-| `integratorType`      | `integratorLeapfrog` | 2nd order compared to euler and is time-reversible |
+| `integratorType`      | `integratorLeapfrog` | 2nd-order compared to Euler and is time-reversible |
 | `forceCalcType`    | `ForceCalcBarnesHutParallel`      | Better performance than non-parallel counterpart and the all-pairs quadratic-time algorithm is simply infeasible for large datasets |
 | `theta` (if applicable) | `0.5` or `1`      | `0.5` gives very good accuracy. `1` gives acceptable accuracy at better performance |
 
