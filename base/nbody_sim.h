@@ -38,15 +38,15 @@ public:
 
 private:
     template <typename T>
-    static T readParamByName(std::istream &in, std::string expectedName);
+    static T readParamByName(std::istream &in, const std::string& expectedName);
 
     // TODO: merge the separate Vec3D method if possible.
-    static Vec3D readVec3DParamByName(std::istream &in, std::string expectedName);
+    static Vec3D readVec3DParamByName(std::istream &in, const std::string& expectedName);
 
     template <typename T>
-    static void writeParamWithName(std::ostream &out, std::string name, T value, int indentLevel);
+    static void writeParamWithName(std::ostream &out, const std::string& name, T value, int indentLevel);
 
-    static void verifyParamName(std::istream &in, std::string expectedName);
+    static void verifyParamName(std::istream &in, const std::string& expectedName);
 };
 
 

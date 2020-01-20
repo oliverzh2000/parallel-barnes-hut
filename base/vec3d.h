@@ -17,15 +17,15 @@ public:
 
     Vec3D &operator+=(const Vec3D &other);
 
-    const Vec3D operator+(const Vec3D &other) const;
+    Vec3D operator+(const Vec3D &other) const;
 
     Vec3D &operator-=(const Vec3D &other);
 
-    const Vec3D operator-(const Vec3D &other) const;
+    Vec3D operator-(const Vec3D &other) const;
 
     Vec3D &operator*=(double k);
 
-    const Vec3D operator*(double k) const;
+    Vec3D operator*(double k) const;
 };
 
 

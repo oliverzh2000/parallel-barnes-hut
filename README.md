@@ -119,7 +119,7 @@ starsInitMode: readStarsInline
 | Parameter        | Recommended value           | Reason  |
 | :------------- |:-------------| :-----|
 | `integratorType`      | `integratorLeapfrog` | 2nd order compared to euler and is time-reversible |
-| `forceCalcType`    | `ForceCalcBarnesHutParallel`      | Better perforamnce than non-parallel counterpart and the all-pairs quadratic-time algorithm is simply infeasible for large datasets |
+| `forceCalcType`    | `ForceCalcBarnesHutParallel`      | Better performance than non-parallel counterpart and the all-pairs quadratic-time algorithm is simply infeasible for large datasets |
 | `theta` (if applicable) | `0.5` or `1`      | `0.5` gives very good accuracy. `1` gives acceptable accuracy at better performance |
 
 # Roadmap

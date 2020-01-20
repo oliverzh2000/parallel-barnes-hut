@@ -166,29 +166,29 @@ void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadabl
 }
 
 template<typename T>
-T NBodySim::readParamByName(std::istream &in, std::__cxx11::string expectedName) {
-    verifyParamName(in, move(expectedName));
+T NBodySim::readParamByName(std::istream &in, const std::string& expectedName) {
+    verifyParamName(in, expectedName);
     T value;
     in >> value;
     return value;
 }
 
-Vec3D NBodySim::readVec3DParamByName(std::istream &in, std::__cxx11::string expectedName) {
-    verifyParamName(in, move(expectedName));
+Vec3D NBodySim::readVec3DParamByName(std::istream &in, const std::string& expectedName) {
+    verifyParamName(in, expectedName);
     return Vec3D{readParamByName<double>(in, "x"),
                  readParamByName<double>(in, "y"),
                  readParamByName<double>(in, "z")};
 }
 
 template<typename T>
-void NBodySim::writeParamWithName(std::ostream &out, std::__cxx11::string name, T value, int indentLevel) {
+void NBodySim::writeParamWithName(std::ostream &out, const std::string& name, T value, int indentLevel) {
     int charsPerIndent = 4;
-    out << std::__cxx11::string(charsPerIndent * indentLevel, ' ');
+    out << std::string(charsPerIndent * indentLevel, ' ');
     out << name << ": " << value << std::endl;
 }
 
-void NBodySim::verifyParamName(std::istream &in, std::__cxx11::string expectedName) {
-    std::__cxx11::string nameWithColon;
+void NBodySim::verifyParamName(std::istream &in, const std::string& expectedName) {
+    std::string nameWithColon;
     in >> nameWithColon;
     if (nameWithColon.substr(0, nameWithColon.size() - 1) != expectedName) {
         throw std::runtime_error{expectedName + " missing or incomplete."};

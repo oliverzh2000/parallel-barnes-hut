@@ -3,7 +3,6 @@
 //
 
 #include "force_calc_all_pairs.h"
-#include "../base/vec3d.h"
 #include "../base/model.h"
 
 ForceCalcAllPairs::ForceCalcAllPairs(double gravConst, double softening) : ForceCalc(gravConst, softening) {}

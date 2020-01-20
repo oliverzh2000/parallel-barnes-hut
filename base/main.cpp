@@ -3,15 +3,11 @@
 //
 
 #include <iostream>
-#include <fstream>
 
 #include "nbody_sim.h"
 #include "star.h"
 #include "../integrator/integrator.h"
 #include "../force_calc/force_calc.h"
-#include "../integrator/integrator_euler.h"
-#include "../force_calc/force_calc_all_pairs.h"
-#include "../force_calc/force_calc_barnes_hut.h"
 #include "../utils/stopwatch.h"
 
 int main(int argc, char *argv[]) {
@@ -27,6 +23,8 @@ int main(int argc, char *argv[]) {
     bool showVersion = false;
     bool failedArgParse = false;
     std::string unrecognizedFlag;
+
+    // TODO: Add short-form options.
     for (int i = 1; i < argc; ++i) {
         if (std::string{argv[i]} == "--sim-directory") {
             simDir = argv[i + 1];

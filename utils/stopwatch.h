@@ -22,7 +22,7 @@ public:
     void stopAndOutput();
 
     /// Sets the doOutput global flag (applies to all Stopwatch instances).
-    /// If true, then stopAndOutput will print elpased time. Otherwise, stopAndOutput will print nothing.
+    /// If true, then stopAndOutput will print elapsed time. Otherwise, stopAndOutput will print nothing.
     void static setDoOutput(bool doOutput);
 
 private:

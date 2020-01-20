@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <iostream>
+
 #include "vec3d.h"
 
 class Star;

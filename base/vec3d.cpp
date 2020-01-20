@@ -18,7 +18,7 @@ Vec3D &Vec3D::operator+=(const Vec3D &other) {
     return *this;
 }
 
-const Vec3D Vec3D::operator+(const Vec3D &other) const {
+Vec3D Vec3D::operator+(const Vec3D &other) const {
     return Vec3D{*this} += other;
 }
 
@@ -29,7 +29,7 @@ Vec3D &Vec3D::operator-=(const Vec3D &other) {
     return *this;
 }
 
-const Vec3D Vec3D::operator-(const Vec3D &other) const {
+Vec3D Vec3D::operator-(const Vec3D &other) const {
     return Vec3D{*this} -= other;
 }
 
@@ -40,6 +40,6 @@ Vec3D &Vec3D::operator*=(double k) {
     return *this;
 }
 
-const Vec3D Vec3D::operator*(double k) const {
+Vec3D Vec3D::operator*(double k) const {
     return Vec3D{*this} *= k;
 }

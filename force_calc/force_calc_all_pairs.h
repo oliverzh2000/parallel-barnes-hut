@@ -2,8 +2,8 @@
 // Created by Oliver Zhang on 2019-12-23.
 //
 
-#ifndef BH_SIM_BRUTEFORCECALC_H
-#define BH_SIM_BRUTEFORCECALC_H
+#ifndef BH_SIM_FORCECALC_H
+#define BH_SIM_FORCECALC_H
 
 #include "force_calc.h"
 

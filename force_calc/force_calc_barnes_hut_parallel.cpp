@@ -4,7 +4,6 @@
 
 #include <thread>
 #include <tuple>
-#include <chrono>
 #include "force_calc_barnes_hut_parallel.h"
 
 ForceCalcBarnesHutParallel::ForceCalcBarnesHutParallel(double gravConst, double softening, double theta)
@@ -42,7 +41,7 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     }
 }
 
-void ForceCalcBarnesHutParallel::updateNetAccelForIndices(Model &model, const OctTree &octTree, const std::vector<int> indices) const {
+void ForceCalcBarnesHutParallel::updateNetAccelForIndices(Model &model, const OctTree &octTree, const std::vector<int> &indices) const {
     for (int i: indices) {
         model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree(octTree.root, octTree.length, model.pos(i));
     }
