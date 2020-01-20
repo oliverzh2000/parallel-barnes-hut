@@ -1,12 +1,12 @@
 # Parallel 3D Barnes-Hut N-Body Simulation
 #### Version 1.0.0
 
-A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system. 
+A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
 
 CUDA GPU acceleration, simulation viewer, simulation data compression, and optimized support for other compilers (non-GCC) coming soon. See [Roadmap](#roadmap)
 
-## Getting Started
-1. Checkout the repo from github, and build the project with `make` (Windows build script coming soon). You will need to ha
+# Getting Started
+1. Checkout the repo from github, and build the project with `make` (Windows build script coming soon).
 ```shell
 $ git clone https://github.com/oliverzh2000/3d-barnes-hut.git
 $ cd 3d-barnes-hut
@@ -15,7 +15,7 @@ $ nbody --help
 ```
 See [Command Line Options](#command-line-options) for detailed usage information.
 
-2. Initialize the simulation with between `~10^6` and `~10^7` stars with random positions and velocities and then leave the system running for a few days, weeks, or even months. See [Recommended Parameter Values](#recommended-parameter-values) for some general tips.
+2. Initialize the simulation with between `~10^7` and `~10^8` stars with random positions and velocities and then leave the system running for a few days, weeks, or even months. See [Recommended Parameter Values](#recommended-parameter-values) for some general tips.
   - **Important!** Make sure you have enough disk space to store the simulation results. _(Coming soon)_ You can use the `--estimate` command line option to get an estimate of the disk space needed to store the simulation results at your specified level of detail as well as an estimate of the time needed to run the simulation.
 3. _(Coming soon)_ Sign up for an email notification when your simulation completes.
 4. _(Coming soon)_ Come back when finished and view your spectacular results on the simulation viewer.
@@ -119,7 +119,7 @@ starsInitMode: readStarsInline
 | Parameter        | Recommended value           | Reason  |
 | :------------- |:-------------| :-----|
 | `integratorType`      | `integratorLeapfrog` | 2nd order compared to euler and is time-reversible |
-| `forceCalcType`    | `ForceCalcBarnesHutParallel`      | Better perforamnce than non-parallel counterpart and all-pairs quadratic algorithm is simply infeasible for large dataset sizes |
+| `forceCalcType`    | `ForceCalcBarnesHutParallel`      | Better perforamnce than non-parallel counterpart and the all-pairs quadratic-time algorithm is simply infeasible for large datasets |
 | `theta` (if applicable) | `0.5` or `1`      | `0.5` gives very good accuracy. `1` gives acceptable accuracy at better performance |
 
 # Roadmap
