@@ -61,7 +61,10 @@ void NBodySim::addStar(Star star) {
 
 
 NBodySim NBodySim::readFromFile(const std::string &simDir) {
-    std::ifstream in{simDir + "\\init.txt"};
+    std::ifstream in{simDir + "/init.txt"};
+    if (in.fail()) {
+        throw std::runtime_error{"failed to open init.txt: " + simDir + "/init.txt"};
+    }
     // TODO: Replace this hardcoded parsing with json or something better.
     Integrator *integrator;
     auto integratorType = readParamByName<std::string>(in, "integratorType");
@@ -127,10 +130,10 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
         std::ifstream frameIfs{latestFile.string()};
         sim.model.deSerialize(frameIfs);
 #endif
-        std::ifstream frameNumberIfs{simDir + "\\latest-frame-index.txt"};
+        std::ifstream frameNumberIfs{simDir + "/latest-frame-index.txt"};
         int latestBinaryFrameNumber;
         frameNumberIfs >> latestBinaryFrameNumber;
-        std::ifstream frameIfs{simDir + "\\frames\\frame-" + std::to_string(latestBinaryFrameNumber) + ".data"};
+        std::ifstream frameIfs{simDir + "/frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data"};
         sim.model.deSerialize(frameIfs);
         sim.integrator->setTimestepCount(latestBinaryFrameNumber);
     } else if (starsInitMode == "createSpiralGalaxy") {
@@ -147,11 +150,11 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
 }
 
 void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadable) {
-    std::ofstream frameOfs{simDir + "\\frames\\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+    std::ofstream frameOfs{simDir + "/frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
     model.serialize(frameOfs);
     if (alsoWriteHumanReadable) {
         std::ofstream humanReadableFrameOfs{
-                simDir + "\\hr-frames\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+                simDir + "/hr-frames\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
         unsigned long long int n = model.getStars().size();
         humanReadableFrameOfs << n << std::endl;
         for (const Star &star: model.getStars()) {
@@ -161,7 +164,7 @@ void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadabl
                                   << star.mass << std::endl;
         }
     }
-    std::ofstream latestFrameIndexOfs{simDir + "\\latest-frame-index.txt"};
+    std::ofstream latestFrameIndexOfs{simDir + "/latest-frame-index.txt"};
     latestFrameIndexOfs << integrator->getTimestepCount();
 }
 
