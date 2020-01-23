@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g -pthread")
 
 add_executable(nbody
         base/main.cpp
