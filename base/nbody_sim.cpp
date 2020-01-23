@@ -165,7 +165,7 @@ void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadabl
         }
     }
     std::ofstream latestFrameIndexOfs{simDir + "/latest-frame-index.txt"};
-    latestFrameIndexOfs << integrator->getTimestepCount();
+    latestFrameIndexOfs << integrator->getTimestepCount() << std::endl;
 }
 
 template<typename T>
