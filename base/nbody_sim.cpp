@@ -99,14 +99,14 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
     NBodySim sim = NBodySim{integrator, forceCalc};
 
     auto starsInitMode = readParamByName<std::string>(in, "starsInitMode");
-    if (starsInitMode == "readStarsInline") {
+    if (starsInitMode == "ReadStarsInline") {
         auto n = readParamByName<int>(in, "n");
         for (int i = 0; i < n; ++i) {
             double posX, posY, posZ, velX, velY, velZ, mass;
             in >> posX >> posY >> posZ >> velX >> velY >> velZ >> mass;
             sim.addStar({{posX, posY, posZ}, {velX, velY, velZ}, mass});
         }
-    } else if (starsInitMode == "readStarsFromLatestBinaryFrame") {
+    } else if (starsInitMode == "ReadStarsFromLatestBinaryFrame") {
 #if 0
         // TODO: Add this back in once I am able to use the <filesystem> header properly.
         int latestFameIndex = 0;
@@ -126,6 +126,8 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
                     throw std::runtime_error{"frame file does not begin with 'frame-' and end with '.data' extension."};
                 }
             }
+        } else {
+            throw std::runtime_error{"invalid starsInitMode"};
         }
         std::ifstream frameIfs{latestFile.string()};
         sim.model.deSerialize(frameIfs);
@@ -136,7 +138,7 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
         std::ifstream frameIfs{simDir + "/frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data"};
         sim.model.deSerialize(frameIfs);
         sim.integrator->setTimestepCount(latestBinaryFrameNumber);
-    } else if (starsInitMode == "createSpiralGalaxy") {
+    } else if (starsInitMode == "CreateSpiralGalaxy") {
         auto n = readParamByName<int>(in, "n");
         auto centerPos = readVec3DParamByName(in, "centerPos");
         auto centerVel = readVec3DParamByName(in, "centerVel");
@@ -154,7 +156,7 @@ void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadabl
     model.serialize(frameOfs);
     if (alsoWriteHumanReadable) {
         std::ofstream humanReadableFrameOfs{
-                simDir + "/hr-frames\frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+                simDir + "/hr-frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
         unsigned long long int n = model.getStars().size();
         humanReadableFrameOfs << n << std::endl;
         for (const Star &star: model.getStars()) {
