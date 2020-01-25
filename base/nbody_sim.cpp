@@ -129,15 +129,16 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
         } else {
             throw std::runtime_error{"invalid starsInitMode"};
         }
-        std::ifstream frameIfs{latestFile.string()};
+        std::ifstream frameIfs{latestFile.string(), std::ios::binary};
         sim.model.deSerialize(frameIfs);
 #endif
         std::ifstream frameNumberIfs{simDir + "/latest-frame-index.txt"};
         int latestBinaryFrameNumber;
         frameNumberIfs >> latestBinaryFrameNumber;
-        std::ifstream frameIfs{simDir + "/frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data"};
-        sim.model.deSerialize(frameIfs);
         sim.integrator->setTimestepCount(latestBinaryFrameNumber);
+
+        std::ifstream frameIfs{simDir + "/frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data", std::ios::binary};
+        sim.model.deSerialize(frameIfs);
     } else if (starsInitMode == "CreateSpiralGalaxy") {
         auto n = readParamByName<int>(in, "n");
         auto centerPos = readVec3DParamByName(in, "centerPos");
@@ -152,7 +153,7 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
 }
 
 void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadable) {
-    std::ofstream frameOfs{simDir + "/frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
+    std::ofstream frameOfs{simDir + "/frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data", std::ios::binary};
     model.serialize(frameOfs);
     if (alsoWriteHumanReadable) {
         std::ofstream humanReadableFrameOfs{

@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     std::cout << "3D N-body simulation with Barnes-Hut, by Oliver Zhang." << std::endl;
 
     std::string simDir;
-    int n = 10;
+    int n = 1;
     int nPerWrite = 1;
     bool verbose = false;
     bool silent = false;
@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+
     if (!silent) {
         std::cout << "\nDone." << std::endl;
     }
