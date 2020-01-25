@@ -15,10 +15,6 @@ public:
     /// 2) Perform force calculation among 8 threads. (fork and join).
     void updateNetAccel(Model &model) const override;
 
-private:
-    void updateNetAccelForIndices(Model &model, const OctTree &octTree, const std::vector<int> &indices) const;
-    void updateNetAccelForIndices2(Model &model, const OctTree &octTree, int start, int) const;
-
 //    int getSpaceIndex(const Vec3D &center, int xDiv, int yDiv, int zDiv, const Vec3D &pos);
 };
 
