@@ -1,0 +1,13 @@
+# Install toolchain
+sudo apt install build-essential
+sudo apt install cmake
+
+# Create all build artifacts in dedicated build directory
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
+make
+cp nbody ../nbody
+
+cd ../
+echo "Build succeeded."
