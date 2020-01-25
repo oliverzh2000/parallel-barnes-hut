@@ -1,0 +1,22 @@
+integratorType: IntegratorLeapfrog
+    timestep: 0.01
+
+forceCalcType: ForceCalcBarnesHutParallel
+    gravConst: 1.0
+    softening: 0.01
+    theta: 0.5
+
+starsInitMode: CreateSpiralGalaxy
+    n: 10000000
+    centerPos:
+        x: 0
+        y: 0
+        z: 0
+    centerVel:
+        x: 0
+        y: 0
+        z: 0
+    radialStdDev: 100
+    avgMass: 1
+    avgMassStdDev: 0.1
+    seed: 0
