@@ -52,15 +52,17 @@ OctTree::Node::~Node() {
 void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, double mass) {
 //    assert (isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
+    bool wasLeaf = false;
     if (isLeaf()) {
         children = new Node *[8]();
+        wasLeaf = true;
     }
     if (isEmpty()) {
         children[octant] = new Node{pos, mass};
         centerOfMass = pos;
         totalMass = mass;
         return;
-    } else if (isLeaf()) {
+    } else if (wasLeaf) {
         children[getOctant(center, centerOfMass)] = new Node{centerOfMass, totalMass};
     }
     if (children[octant] == nullptr) {
