@@ -43,3 +43,8 @@ Vec3D &Vec3D::operator*=(double k) {
 Vec3D Vec3D::operator*(double k) const {
     return Vec3D{*this} *= k;
 }
+
+std::ostream &operator<<(std::ostream &out, const Vec3D &vec3D) {
+    out << "(" << vec3D.x << ", " << vec3D.y << ", " << vec3D.z << ")";
+    return out;
+}

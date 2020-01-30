@@ -5,6 +5,7 @@
 #ifndef BH_SIM_VEC3D_H
 #define BH_SIM_VEC3D_H
 
+#include <ostream>
 
 struct Vec3D {
     double x = 0;
@@ -26,6 +27,8 @@ public:
     Vec3D &operator*=(double k);
 
     Vec3D operator*(double k) const;
+
+    friend std::ostream &operator<<(std::ostream &out, const Vec3D &vec3D);
 };
 
 
