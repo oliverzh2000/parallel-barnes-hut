@@ -9,6 +9,8 @@
 #include "force_calc.h"
 #include "oct_tree.h"
 
+class FlatOctTree;
+
 class ForceCalcBarnesHut : public  ForceCalc {
     double theta; // Max angular threshold for a center of mass to not recursive split up upon force calculation.
 public:
@@ -19,6 +21,7 @@ public:
 
 protected:
     virtual Vec3D gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const;
+    virtual Vec3D gravFieldViaTree2(const FlatOctTree &tree, int node, double length, const Vec3D &pos) const;
 };
 
 

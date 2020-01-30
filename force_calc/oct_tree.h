@@ -6,19 +6,21 @@
 #define BH_SIM_OCTTREE_H
 
 #include <vector>
+
 #include "../base/vec3d.h"
 #include "../base/star.h"
 #include "../base/model.h"
 
 /**
- * OctTree data structure to enable efficient force computation with Barnes-Hut algorithm
+ * Oct-tree data structure to enable efficient force computation with Barnes-Hut algorithm
  *
  * Space partitioning is done in cubes to save memory (with all subtrees also being cubes).
  */
-class OctTree final {
+class OctTree {
     Vec3D center;
     double length; // distance from center to any side of the OctTree bounding cube.
 
+public:
     class Node final {
         // Extra level of indirection so that children can be null when there are 0 children, to save memory.
         Node **children;
@@ -27,7 +29,8 @@ class OctTree final {
 
     public:
         /// Construct a new Node with one child located at the given center and given mass.
-        explicit Node(const Vec3D &centerOfMass={0, 0, 0}, double mass=0);
+        explicit Node(const Vec3D &centerOfMass = {0, 0, 0}, double mass = 0);
+
         ~Node();
 
         /**
@@ -39,37 +42,42 @@ class OctTree final {
          * @param pos Position of the child to be added
          * @param mass Mass of the child to be added
          */
-        void addChild(const Vec3D &center, double length, Vec3D pos, double mass);
+        void addChild(const Vec3D &center, double length, const Vec3D &pos, double mass);
 
         /// A node is considered empty when total mass is 0.
         /// Note: If all star masses are positive, then all empty Nodes are also leaves.
         bool isEmpty() const;
 
-        /// A node is considered leaf if all children are nullptr.
+        /// A node is considered leaf if it has no children (aka all children are nullptr).
         bool isLeaf() const;
+
+        void debugPrint(int depth) const;
 
         friend class ForceCalcBarnesHut;
         friend class ForceCalcBarnesHutParallel;
-
-    private:
-        /// Return a int between 0 and 7 that uniquely identifies
-        /// the octant that the given position is, relative to the given center.
-        static int getOctant(const Vec3D &center, const Vec3D &pos);
-
-        /// Compute the center of the child octant Node that contains the given position.
-        static Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
-
-        static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
+        friend class FlatOctTree;
     };
 
     Node root = Node{Vec3D{}};
 
 public:
-
     explicit OctTree(const Model &model);
+
+    void debugPrint() const;
 
     friend class ForceCalcBarnesHut;
     friend class ForceCalcBarnesHutParallel;
+    friend class FlatOctTree;
+
+protected:
+
+    /// Return a int between 0 and 7 that uniquely identifies
+    /// the octant that the given position is, relative to the given center.
+    static int getOctant(const Vec3D &center, const Vec3D &pos);
+    /// Compute the center of the child octant Node that contains the given position.
+    static Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
+
+    static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
 
     static std::tuple<Vec3D, double> getBoundingBox(const Model &model);
 };

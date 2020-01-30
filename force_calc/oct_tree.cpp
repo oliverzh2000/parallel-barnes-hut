@@ -2,11 +2,11 @@
 // Created by Oliver Zhang on 2020-01-01.
 //
 
+#include "oct_tree.h"
+
 #include <tuple>
 #include <limits>
 #include <algorithm>
-
-#include "oct_tree.h"
 
 OctTree::OctTree(const Model &model) {
     auto [center, length] = getBoundingBox(model);
@@ -49,7 +49,7 @@ OctTree::Node::~Node() {
     }
 }
 
-void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, double mass) {
+void OctTree::Node::addChild(const Vec3D &center, double length, const Vec3D &pos, double mass) {
 //    assert (isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
     bool wasLeaf = false;
@@ -74,7 +74,27 @@ void OctTree::Node::addChild(const Vec3D &center, double length, Vec3D pos, doub
     totalMass += mass;
 }
 
-int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) {
+bool OctTree::Node::isEmpty() const {
+    return totalMass == 0;
+}
+
+bool OctTree::Node::isLeaf() const {
+    return children == nullptr;
+}
+
+void OctTree::Node::debugPrint(int depth) const {
+    std::cout << std::string(" ", depth * 2) << centerOfMass << ", " << totalMass << std::endl;
+    if (!isLeaf()) {
+        for (int i = 0; i < 8; ++i) {
+            if (children[i] != nullptr) {
+                std::cout << std::string(" ", depth * 2) << i << ":";
+                children[i]->debugPrint(depth + 1);
+            }
+        }
+    }
+}
+
+int OctTree::getOctant(const Vec3D &center, const Vec3D &pos) {
     int octant = 0;
     if (pos.x < center.x) octant += 1;
     if (pos.y < center.y) octant += 2;
@@ -82,7 +102,7 @@ int OctTree::Node::getOctant(const Vec3D &center, const Vec3D &pos) {
     return octant;
 }
 
-Vec3D OctTree::Node::centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) {
+Vec3D OctTree::centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) {
     Vec3D newCenter = currentCenter;
     newCenter.x += (pos.x < currentCenter.x ? -0.5 : 0.5) * currentLength;
     newCenter.y += (pos.y < currentCenter.y ? -0.5 : 0.5) * currentLength;
@@ -90,17 +110,13 @@ Vec3D OctTree::Node::centerOfChildOctant(const Vec3D &currentCenter, double curr
     return newCenter;
 }
 
-bool OctTree::Node::isInBounds(const Vec3D &center, double length, const Vec3D &pos) {
+bool OctTree::isInBounds(const Vec3D &center, double length, const Vec3D &pos) {
     bool a = center.x - length <= pos.x && pos.x <= center.x + length;
     bool b = center.y - length <= pos.y && pos.y <= center.y + length;
     bool c = center.z - length <= pos.z && pos.z <= center.z + length;
     return a && b && c;
 }
 
-bool OctTree::Node::isEmpty() const {
-    return totalMass == 0;
-}
-
-bool OctTree::Node::isLeaf() const {
-    return children == nullptr;
+void OctTree::debugPrint() const {
+    root.debugPrint(0);
 }
