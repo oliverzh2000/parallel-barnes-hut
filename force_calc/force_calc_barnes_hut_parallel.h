@@ -14,8 +14,6 @@ public:
     /// 1) Build oct-tree on one thread.
     /// 2) Perform force calculation among 8 threads. (fork and join).
     void updateNetAccel(Model &model) const override;
-
-//    int getSpaceIndex(const Vec3D &center, int xDiv, int yDiv, int zDiv, const Vec3D &pos);
 };
 
 
