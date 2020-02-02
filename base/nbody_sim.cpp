@@ -148,6 +148,8 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
         auto avgMassStdDev = readParamByName<double>(in, "avgMassStdDev");
         auto seed = readParamByName<int>(in, "seed");
         sim.addXYPlaneSpiralGalaxy(n, centerPos, centerVel, radialStdDev, avgMass, avgMassStdDev, seed);
+    } else {
+        throw std::runtime_error{"invalid stars init mode"};
     }
     return sim;
 }
