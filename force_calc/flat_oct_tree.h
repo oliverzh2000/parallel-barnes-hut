@@ -27,14 +27,16 @@ class FlatOctTree {
 
     std::vector<Vec3D> centerOfMasses;
     std::vector<double> totalMasses;
-    std::vector<std::array<int, 10>> childrenIndices;
+
+    // Since the tree is stored in a breadth-first ordering, we can guarantee that the children of each node are stored contiguously, and in order.
+    // This means that only the index of the first child needs to be stored.
+    std::vector<int> firstChildIndices;
+    std::vector<uint8_t> childrenCounts;
 
 public:
     static constexpr int root = 0;
 
     explicit FlatOctTree(const Model &model);
-
-    const Vec3D &getCenter() const;
 
     double getLength() const;
 
@@ -42,9 +44,9 @@ public:
 
     double totalMass(int index) const;
 
-    const std::array<int , 10> &children(int index) const;
+    int firstChildIndex(int index) const;
 
-    bool isEmpty(int index) const;
+    uint8_t childrenCount(int index) const;
 
     bool isLeaf(int index) const;
 
@@ -52,24 +54,11 @@ private:
     struct BFSNode {
         const OctTree::Node &node;
         int parentIndex = -1;
-        char octantIndex = -1;
+        bool isFirstChild = false;
     };
-
-    void addChild(int node, const Vec3D &center, double length, const Vec3D &pos, double mass);
 
     /// Returns the index of the newly created child node.
     int newNodeAtEnd(const Vec3D &pos, double mass);
-
-    /// Return a int between 0 and 7 that uniquely identifies
-    /// the octant that the given position is, relative to the given center.
-    static int getOctant(const Vec3D &center, const Vec3D &pos);
-
-    /// Compute the center of the child octant Node that contains the given position.
-    static Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
-
-    static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
-
-    static std::tuple<Vec3D, double> getBoundingBox(const Model &model);
 };
 
 

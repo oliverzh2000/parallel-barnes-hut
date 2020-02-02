@@ -72,10 +72,8 @@ Vec3D ForceCalcBarnesHut::gravFieldViaTree2(const FlatOctTree &tree, int node, d
         return gravFieldDueToSingleObject(tree.centerOfMass(node), tree.totalMass(node), pos);
     } else {
         Vec3D accSum;
-        for (int i = 0; i < 8; ++i) {
-            if (tree.children(node).at(i) != -1) {
-                accSum += gravFieldViaTree2(tree, tree.children(node).at(i), length * 0.5, pos);
-            }
+        for (int child = tree.firstChildIndex(node); child < tree.firstChildIndex(node) + tree.childrenCount(node); ++child) {
+            accSum += gravFieldViaTree2(tree, child, length * 0.5, pos);
         }
         return accSum;
     }
