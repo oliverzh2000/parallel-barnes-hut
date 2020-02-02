@@ -5,15 +5,63 @@
 #include "oct_tree.h"
 
 #include <tuple>
+#include <thread>
 #include <limits>
 #include <algorithm>
+#include <assert.h>
 
 OctTree::OctTree(const Model &model) {
     auto [center, length] = getBoundingBox(model);
+
+    int hwThreadCount = std::thread::hardware_concurrency();
+
+    // TODO: remove when multithreading construction ready.
+    hwThreadCount = 1;
+
+    if (hwThreadCount == 8) {
+//        // If there are 8 threads, let each one build a tree in a quadrant, then join them into the final root.
+//        std::array<Model, 8> subModels;
+//        std::array<OctTree *, 8> subTrees{nullptr};
+//        for (const Star &star: model.getStars()) {
+//            subModels.at(getOctant(center, star.pos)).addStar(star);
+//        }
+//        for (int i = 0; i < 8; ++i) {
+//            if (subModels[i].size() > 0) {
+//                subTrees[i]= new OctTree(subModels[i], centerOfOctant(center, length, i), length * 0.5);
+//                std::cout << "i: " << i << std::endl;
+//                subTrees[i]->debugPrint();
+//            }
+//        }
+//        Vec3D centerOfMass = {0, 0, 0};
+//        double totalMass = 0;
+//        for (int i = 0; i < 8; ++i) {
+//            if (subModels[i].size() > 0) {
+//                centerOfMass += subTrees[i]->root.centerOfMass * subTrees[i]->root.totalMass;
+//                totalMass += subTrees[i]->root.totalMass;
+//            }
+//        }
+//        root = Node{centerOfMass * (1 / totalMass), totalMass};
+//        root.children = new Node *[8]();
+//        for (int i = 0; i < 8; ++i) {
+//            if (subModels[i].size() > 0) {
+//                root.children[i] = &subTrees[i]->root;
+//            }
+//        }
+    } else {
+        // Insert all the positions and masses directly into the root tree node.
+        initOctants(model, center, length);
+    }
+    std::cout << "" << std::endl;
     this->center = center;
     this->length = length;
+    debugPrint();
+}
 
-    // Insert all the positions and masses into the root tree node.
+OctTree::OctTree(const Model &model, const Vec3D &center, double length) {
+    initOctants(model, center, length);
+}
+
+void OctTree::initOctants(const Model &model, const Vec3D &center, double length) {
     for (const Star &star: model.getStars()) {
         root.addChild(center, length, star.pos, star.mass);
     }
@@ -39,36 +87,31 @@ std::tuple<Vec3D, double> OctTree::getBoundingBox(const Model &model) {
 }
 
 OctTree::Node::Node(const Vec3D &centerOfMass, double mass)
-        : children{nullptr}, centerOfMass{centerOfMass}, totalMass{mass} {}
+        : children(), centerOfMass{centerOfMass}, totalMass{mass} {}
 
 OctTree::Node::~Node() {
     if (!isLeaf()) {
-        for (int i = 0; i < 8; ++i) {
-            delete children[i];
+        for (auto &child : children) {
+            delete child;
         }
     }
 }
 
 void OctTree::Node::addChild(const Vec3D &center, double length, const Vec3D &pos, double mass) {
-//    assert (isInBounds(center, length, pos));
+    assert (isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
-    bool wasLeaf = false;
-    if (isLeaf()) {
-        children = new Node *[8]();
-        wasLeaf = true;
-    }
     if (isEmpty()) {
-        children[octant] = new Node{pos, mass};
+        // This is a special case for the root node. No other nodes should be empty.
         centerOfMass = pos;
         totalMass = mass;
         return;
-    } else if (wasLeaf) {
+    } else if (isLeaf()) {
         children[getOctant(center, centerOfMass)] = new Node{centerOfMass, totalMass};
     }
     if (children[octant] == nullptr) {
         children[octant] = new Node{pos, mass};
     } else {
-        children[octant]->addChild(centerOfChildOctant(center, length, pos), length / 2, pos, mass);
+        children[octant]->addChild(centerOfOctant(center, length, pos), length * 0.5, pos, mass);
     }
     centerOfMass = (centerOfMass * totalMass + pos * mass) * (1 / (totalMass + mass));
     totalMass += mass;
@@ -79,7 +122,12 @@ bool OctTree::Node::isEmpty() const {
 }
 
 bool OctTree::Node::isLeaf() const {
-    return children == nullptr;
+    for (const auto &child : children) {
+        if (child != nullptr) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void OctTree::Node::debugPrint(int depth) const {
@@ -94,20 +142,24 @@ void OctTree::Node::debugPrint(int depth) const {
     }
 }
 
-int OctTree::getOctant(const Vec3D &center, const Vec3D &pos) {
-    int octant = 0;
-    if (pos.x < center.x) octant += 1;
-    if (pos.y < center.y) octant += 2;
-    if (pos.z > center.z) octant += 4;
+uint8_t OctTree::getOctant(const Vec3D &center, const Vec3D &pos) {
+    uint8_t octant = 0;
+    if (pos.x > center.x) octant |= 0b001u;
+    if (pos.y > center.y) octant |= 0b010u;
+    if (pos.z > center.z) octant |= 0b100u;
     return octant;
 }
 
-Vec3D OctTree::centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) {
+Vec3D OctTree::centerOfOctant(const Vec3D &currentCenter, double currentLength, uint8_t octant) {
     Vec3D newCenter = currentCenter;
-    newCenter.x += (pos.x < currentCenter.x ? -0.5 : 0.5) * currentLength;
-    newCenter.y += (pos.y < currentCenter.y ? -0.5 : 0.5) * currentLength;
-    newCenter.z += (pos.z < currentCenter.z ? -0.5 : 0.5) * currentLength;
+    newCenter.x += (octant & 0b001u ? 0.5 : -0.5) * currentLength;
+    newCenter.y += (octant & 0b010u ? 0.5 : -0.5) * currentLength;
+    newCenter.z += (octant & 0b100u ? 0.5 : -0.5) * currentLength;
     return newCenter;
+}
+
+Vec3D OctTree::centerOfOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos) {
+    return centerOfOctant(currentCenter, currentLength, getOctant(currentCenter, pos));
 }
 
 bool OctTree::isInBounds(const Vec3D &center, double length, const Vec3D &pos) {

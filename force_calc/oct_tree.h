@@ -17,13 +17,13 @@
  * Space partitioning is done in cubes to save memory (with all subtrees also being cubes).
  */
 class OctTree {
-    Vec3D center;
-    double length; // distance from center to any side of the OctTree bounding cube.
+    Vec3D center = {0, 0, 0};
+    double length = 0; // distance from center to any side of the OctTree bounding cube.
 
 public:
     class Node final {
         // Extra level of indirection so that children can be null when there are 0 children, to save memory.
-        Node **children;
+        Node *children[8];
         Vec3D centerOfMass;
         double totalMass;
 
@@ -55,6 +55,7 @@ public:
 
         friend class ForceCalcBarnesHut;
         friend class ForceCalcBarnesHutParallel;
+        friend class OctTree;
         friend class FlatOctTree;
     };
 
@@ -63,19 +64,27 @@ public:
 public:
     explicit OctTree(const Model &model);
 
+    OctTree(const Model &model, const Vec3D &center, double length);
+
     void debugPrint() const;
 
     friend class ForceCalcBarnesHut;
+
     friend class ForceCalcBarnesHutParallel;
     friend class FlatOctTree;
 
-protected:
+private:
+    void initOctants(const Model &model, const Vec3D &center, double length);
 
     /// Return a int between 0 and 7 that uniquely identifies
     /// the octant that the given position is, relative to the given center.
-    static int getOctant(const Vec3D &center, const Vec3D &pos);
-    /// Compute the center of the child octant Node that contains the given position.
-    static Vec3D centerOfChildOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
+    static uint8_t getOctant(const Vec3D &center, const Vec3D &pos);
+
+    /// Compute the center of the given octant.
+    static Vec3D centerOfOctant(const Vec3D &currentCenter, double currentLength, uint8_t octant);
+
+    /// Compute the center of the octant that contains the given position.
+    static Vec3D centerOfOctant(const Vec3D &currentCenter, double currentLength, const Vec3D &pos);
 
     static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
 
