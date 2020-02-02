@@ -14,15 +14,14 @@
 FlatOctTree::FlatOctTree(const Model &model) {
     // Construct a normal oct-tree then flatten it breadth-first.
 
-    auto s1 = Stopwatch::createAndStart("    build oct-tree");
+    auto s1 = Stopwatch::createAndStart("build oct-tree");
     OctTree octTree{model};
-    octTree.debugPrint();
     std::cout << "" << std::endl;
     center = octTree.center;
     length = octTree.length;
     s1.stopAndOutput();
 
-    auto s2 = Stopwatch::createAndStart("    flatten oct-tree");
+    auto s2 = Stopwatch::createAndStart("flatten oct-tree");
     // insert octTree.root into queue, with parent and octant indices both set to 0.
     // while queue not empty:
     //   insert front node

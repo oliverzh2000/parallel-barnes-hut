@@ -1,19 +1,20 @@
-#include <utility>
-
-
 //
 // Created by Oliver Zhang on 2020-01-18.
 //
 
-#include <chrono>
-#include <iostream>
-
 #include "stopwatch.h"
 
-bool Stopwatch::doOutput = true;
+#include <chrono>
+#include <iostream>
+#include <utility>
+#include <string>
+#include <stack>
 
-Stopwatch Stopwatch::createAndStart(std::string name) {
-    Stopwatch stopwatch{std::move(name)};
+bool Stopwatch::doOutput = true;
+std::stack<std::string> Stopwatch::namesInProgress;
+
+Stopwatch Stopwatch::createAndStart(const std::string &name) {
+    Stopwatch stopwatch{name};
     stopwatch.start();
     return stopwatch;
 }
@@ -26,18 +27,26 @@ void Stopwatch::setDoOutput(bool doOutput) {
 }
 
 void Stopwatch::start() {
+    namesInProgress.emplace(name);
     start_time = std::chrono::high_resolution_clock::now();
 }
 
 void Stopwatch::stop() {
+    if (name != namesInProgress.top()) {
+        throw std::runtime_error("only the most recently started Stopwatch can be stopped");
+    }
     stop_time = std::chrono::high_resolution_clock::now();
+    namesInProgress.pop();
 }
 
 void Stopwatch::output() const {
     if (doOutput) {
-        std::chrono::duration duration =  std::chrono::duration_cast<std::chrono::duration<double>>(stop_time - start_time);
-        std::cout.width(6);
-        std::cout << std::right << int(std::chrono::duration<double, std::milli>(duration).count()) << "ms: " << name << std::endl;
+        std::chrono::duration duration = std::chrono::duration_cast<std::chrono::duration<double>>(
+                stop_time - start_time);
+        std::cout.width(7);
+        int indentLevel = namesInProgress.size();
+        std::cout << std::right << int(std::chrono::duration<double, std::milli>(duration).count()) << "ms: "
+                  << std::string(" ", 2 * indentLevel) << name << std::endl;
     }
 }
 

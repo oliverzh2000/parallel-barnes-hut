@@ -15,7 +15,7 @@ ForceCalcBarnesHutParallel::ForceCalcBarnesHutParallel(double gravConst, double 
 void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     int hwThreadCount = std::thread::hardware_concurrency();
 
-    auto s1 = Stopwatch::createAndStart("  acc = 0");
+    auto s1 = Stopwatch::createAndStart("acc = 0");
     for (int i = 0; i < model.size(); ++i) {
         model.acc(i) = {0, 0, 0};
     }
@@ -37,11 +37,11 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
 //        }, start, end};
 //    }
 
-    auto s2 = Stopwatch::createAndStart("  build tree");
+    auto s2 = Stopwatch::createAndStart("build tree");
     FlatOctTree octTree{model};
     s2.stopAndOutput();
 
-    auto s3 = Stopwatch::createAndStart("  tree traversal");
+    auto s3 = Stopwatch::createAndStart("tree traversal");
     std::thread threads[hwThreadCount];
     for (int i = 0; i < hwThreadCount; ++i) {
         int start = model.size() * i / hwThreadCount;

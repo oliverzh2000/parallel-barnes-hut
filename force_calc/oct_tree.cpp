@@ -12,6 +12,8 @@
 
 OctTree::OctTree(const Model &model) {
     auto [center, length] = getBoundingBox(model);
+    this->center = center;
+    this->length = length;
 
     int hwThreadCount = std::thread::hardware_concurrency();
 
@@ -51,10 +53,6 @@ OctTree::OctTree(const Model &model) {
         // Insert all the positions and masses directly into the root tree node.
         initOctants(model, center, length);
     }
-    std::cout << "" << std::endl;
-    this->center = center;
-    this->length = length;
-    debugPrint();
 }
 
 OctTree::OctTree(const Model &model, const Vec3D &center, double length) {

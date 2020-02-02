@@ -13,31 +13,31 @@ ForceCalcBarnesHut::ForceCalcBarnesHut(double gravConst, double softening, doubl
         : ForceCalc(gravConst, softening), theta{theta} {}
 
 void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
-    auto s1 = Stopwatch::createAndStart("  acc = 0");
+    auto s1 = Stopwatch::createAndStart("acc = 0");
     for (int i = 0; i < model.size(); ++i) {
         model.acc(i) = {0, 0, 0};
     }
     s1.stopAndOutput();
 
-    bool flat = true;
+    bool flat = false;
 
     if (!flat) {
-        auto s2 = Stopwatch::createAndStart("  build tree");
+        auto s2 = Stopwatch::createAndStart("build tree");
         OctTree octTree{model};
         s2.stopAndOutput();
 
-        auto s3 = Stopwatch::createAndStart("  traverse tree");
+        auto s3 = Stopwatch::createAndStart("traverse tree");
         for (int i = 0; i < model.size(); ++i) {
             model.acc(i) += gravFieldViaTree(octTree.root, octTree.length, model.pos(i));
         }
 
         s3.stopAndOutput();
     } else {
-        auto s2 = Stopwatch::createAndStart("  build tree");
+        auto s2 = Stopwatch::createAndStart("build tree");
         FlatOctTree octTree{model};
         s2.stopAndOutput();
 
-        auto s3 = Stopwatch::createAndStart("  traverse tree");
+        auto s3 = Stopwatch::createAndStart("traverse tree");
         for (int i = 0; i < model.size(); ++i) {
             model.acc(i) += gravFieldViaTree2(octTree, FlatOctTree::root, octTree.getLength(), model.pos(i));
         }
