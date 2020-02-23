@@ -16,7 +16,6 @@ FlatOctTree::FlatOctTree(const Model &model) {
 
     auto s1 = Stopwatch::createAndStart("build oct-tree");
     OctTree octTree{model};
-    std::cout << "" << std::endl;
     center = octTree.center;
     length = octTree.length;
     s1.stopAndOutput();

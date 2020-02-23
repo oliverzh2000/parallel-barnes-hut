@@ -18,7 +18,7 @@
  */
 class OctTree {
     Vec3D center = {0, 0, 0};
-    double length = 0; // distance from center to any side of the OctTree bounding cube.
+    double length = 0; // Side length of the Octree bounding cube.
 
 public:
     class Node final {

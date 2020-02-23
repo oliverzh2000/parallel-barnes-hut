@@ -80,7 +80,7 @@ std::tuple<Vec3D, double> OctTree::getBoundingBox(const Model &model) {
         if (star.pos.z > maxCorner.z) maxCorner.z = star.pos.z;
     }
     Vec3D center = minCorner * 0.5 + maxCorner * 0.5;
-    double length = std::max({(center - minCorner).x, (center - minCorner).y, (center - minCorner).z});
+    double length = std::max({(center - minCorner).x, (center - minCorner).y, (center - minCorner).z}) * 2;
     return {center, length};
 }
 
@@ -150,9 +150,9 @@ uint8_t OctTree::getOctant(const Vec3D &center, const Vec3D &pos) {
 
 Vec3D OctTree::centerOfOctant(const Vec3D &currentCenter, double currentLength, uint8_t octant) {
     Vec3D newCenter = currentCenter;
-    newCenter.x += (octant & 0b001u ? 0.5 : -0.5) * currentLength;
-    newCenter.y += (octant & 0b010u ? 0.5 : -0.5) * currentLength;
-    newCenter.z += (octant & 0b100u ? 0.5 : -0.5) * currentLength;
+    newCenter.x += (octant & 0b001u ? 0.25 : -0.25) * currentLength;
+    newCenter.y += (octant & 0b010u ? 0.25 : -0.25) * currentLength;
+    newCenter.z += (octant & 0b100u ? 0.25 : -0.25) * currentLength;
     return newCenter;
 }
 
