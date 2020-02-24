@@ -18,7 +18,6 @@ FlatOctTree::FlatOctTree(const Model &model) {
     OctTree octTree{model};
     center = octTree.center;
     length = octTree.length;
-    s1.stopAndOutput();
 
     auto s2 = Stopwatch::createAndStart("flatten oct-tree");
     // insert octTree.root into queue, with parent and octant indices both set to 0.
@@ -60,9 +59,9 @@ FlatOctTree::FlatOctTree(const Model &model) {
         }
         if (!front.node.isLeaf()) {
             bool isFirstChild = true;
-            for (uint8_t i = 0; i < 8; i++) {
-                if (front.node.children[i] != nullptr) {
-                    nodes.emplace(BFSNode{*front.node.children[i], frontIndex, isFirstChild});
+            for (const auto &child : front.node.children) {
+                if (child != nullptr) {
+                    nodes.emplace(BFSNode{*child, frontIndex, isFirstChild});
                     isFirstChild = false;
                 }
             }
