@@ -37,7 +37,10 @@ add_executable(nbody
         utils/stopwatch.h
         )
 
+
 add_executable(nbody_test
         test/catch.hpp
-        test/TestOctTree.cpp
+        test/test_main.cpp
+        test/test_octree.cpp
         )
+
