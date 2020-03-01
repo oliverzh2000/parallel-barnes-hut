@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
     std::string simDir;
     int steps = 1;
     int framesPerFullPrecisionWrite = 15; // every N frames, write full precision frame
-    bool doHumanReadableWrite = false;
-    bool doSpaceEfficientWrite = true;
+    bool writeHumanReadable = false;
+    bool writeSpaceEfficient = true;
 
     bool verbose = false;
     bool silent = false;
@@ -50,10 +50,10 @@ int main(int argc, char *argv[]) {
             showVersion = true;
             continue;
         } else if (std::string{argv[i]} == "--human-readable-write") {
-            doHumanReadableWrite = true;
+            writeHumanReadable = true;
             continue;
         } else if (std::string{argv[i]} == "--no-space-efficient-write") {
-            doSpaceEfficientWrite = false;
+            writeSpaceEfficient = false;
             framesPerFullPrecisionWrite = 1;
             continue;
         } else {
@@ -102,7 +102,10 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < steps; ++i) {
         sim->advanceSingleStep();
-        sim->writeToFile(simDir, doHumanReadableWrite, (i % framesPerFullPrecisionWrite == 0), doSpaceEfficientWrite);
+        bool writeFullPrecision = i % framesPerFullPrecisionWrite == 0 || i == steps - 1;
+        auto s2 = Stopwatch::createAndStart("write to file");
+        sim->writeToFile(simDir, writeHumanReadable, writeFullPrecision, writeSpaceEfficient);
+        s2.stopAndOutput();
         if (!silent) {
             std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(steps) << " (" << (i + 1) / double(steps) * 100 << "%)" << std::endl;
         }

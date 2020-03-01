@@ -169,7 +169,7 @@ void NBodySim::writeToFile(const std::string &simDir, bool writeHumanReadable, b
     std::string outFileName = "frame-" + std::to_string(integrator->getTimestepCount())  + ".data";
     if (writeFullPrecision) {
         std::ofstream frameOfs{simDir + "/frames/" + outFileName, std::ios::binary};
-        model.serialize(frameOfs);
+        model.serializeFullPrecision(frameOfs);
     }
     if (writeSpaceEfficient) {
         std::ofstream frameOfs{simDir + "/short-frames/" + outFileName, std::ios::binary};

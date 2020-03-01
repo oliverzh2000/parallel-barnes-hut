@@ -37,11 +37,11 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
 //        }, start, end};
 //    }
 
-    auto s2 = Stopwatch::createAndStart("build tree");
+    auto s2 = Stopwatch::createAndStart("build octree");
     BreadthFirstOctree octTree{model};
     s2.stopAndOutput();
 
-    auto s3 = Stopwatch::createAndStart("tree traversal");
+    auto s3 = Stopwatch::createAndStart("traverse octree");
     std::thread threads[hwThreadCount];
     for (int i = 0; i < hwThreadCount; ++i) {
         int start = model.size() * i / hwThreadCount;

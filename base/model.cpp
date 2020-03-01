@@ -65,7 +65,7 @@ std::tuple<Vec3D, double> Model::boundingBox() const {
     return {center, length};
 }
 
-void Model::serialize(std::ostream &out) {
+void Model::serializeFullPrecision(std::ostream &out) {
     out << size();
     for (const Star &star: stars) {
         double starData[7]{star.pos.x,

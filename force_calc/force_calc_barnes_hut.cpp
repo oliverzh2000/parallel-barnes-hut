@@ -22,22 +22,22 @@ void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
     bool flat = false;
 
     if (!flat) {
-        auto s2 = Stopwatch::createAndStart("build tree");
+        auto s2 = Stopwatch::createAndStart("build octree");
         Octree octTree{model};
         s2.stopAndOutput();
 
-        auto s3 = Stopwatch::createAndStart("traverse tree");
+        auto s3 = Stopwatch::createAndStart("traverse octree");
         for (int i = 0; i < model.size(); ++i) {
             model.acc(i) += gravFieldViaTree(octTree.root, octTree.length, model.pos(i));
         }
 
         s3.stopAndOutput();
     } else {
-        auto s2 = Stopwatch::createAndStart("build tree");
+        auto s2 = Stopwatch::createAndStart("build octree");
         BreadthFirstOctree octTree{model};
         s2.stopAndOutput();
 
-        auto s3 = Stopwatch::createAndStart("traverse tree");
+        auto s3 = Stopwatch::createAndStart("traverse octree");
         for (int i = 0; i < model.size(); ++i) {
             model.acc(i) += gravFieldViaTree2(octTree, BreadthFirstOctree::root, octTree.getLength(), model.pos(i));
         }

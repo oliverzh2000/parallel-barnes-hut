@@ -14,12 +14,12 @@
 BreadthFirstOctree::BreadthFirstOctree(const Model &model) {
     // Construct a normal oct-tree then flatten it breadth-first.
 
-    auto s1 = Stopwatch::createAndStart("build oct-tree");
+    auto s1 = Stopwatch::createAndStart("build octree");
     Octree octTree{model};
     center = octTree.center;
     length = octTree.length;
 
-    auto s2 = Stopwatch::createAndStart("flatten oct-tree");
+    auto s2 = Stopwatch::createAndStart("flatten octree");
     // insert octTree.root into queue, with parent and octant indices both set to 0.
     // while queue not empty:
     //   insert front node

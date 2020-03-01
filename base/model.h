@@ -42,7 +42,7 @@ public:
     std::tuple<Vec3D, double> boundingBox() const;
 
     // Full precision serialization.
-    void serialize(std::ostream &out);
+    void serializeFullPrecision(std::ostream &out);
 
     void deSerialize(std::istream &in);
 
