@@ -1,5 +1,5 @@
 # Parallel 3D Barnes-Hut N-Body Simulation
-#### Version 1.0.0
+#### Version 2.0.0
 
 A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
 
@@ -9,12 +9,13 @@ CUDA GPU acceleration, simulation viewer, simulation data compression, and optim
 Coming soon. Simulation in progress on Google Compute Engine.
 
 # Getting Started
-1. Checkout the repo from github, and build the project with `make` (Windows build script coming soon).
+1. Checkout the repo from github, and build the project with `cmake`
 ```bash
 $ git clone https://github.com/oliverzh2000/parallel-barnes-hut.git
 $ cd parallel-barnes-hut
+$ cmake ./ DCMAKE_BUILD_TYPE=RelWithDebinfo
 $ make
-$ nbody --help
+$ ./nbody --help
 ```
 See [Command Line Options](#command-line-options) for detailed usage information.
 
@@ -38,7 +39,7 @@ forceCalcType: 'ForceCalcAllPairs' | 'ForceCalcBarnesHut' | 'ForceCalcBarnesHutP
     softening: positive-decimal
     theta: positive-decimal-value  *1.
 
-starsInitMode: 'readStarsInline' | 'readStarsFromLatestBinaryFrame' | createSpiralGalaxy'
+starsInitMode: 'readStarsInline' | 'readStarsFromLatestBinaryFrame' | 'readStarsFromLatestShortFrame' |createSpiralGalaxy'
     n: number-of-stars
     pos-x pos-y pos-z vel-x vel-y vel-z mass
     ... 
