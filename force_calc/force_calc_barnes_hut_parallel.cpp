@@ -7,7 +7,7 @@
 #include <thread>
 
 #include "../utils/stopwatch.h"
-#include "flat_oct_tree.h"
+#include "breadth_first_octree.h"
 
 ForceCalcBarnesHutParallel::ForceCalcBarnesHutParallel(double gravConst, double softening, double theta)
         : ForceCalcBarnesHut(gravConst, softening, theta) {}
@@ -38,7 +38,7 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
 //    }
 
     auto s2 = Stopwatch::createAndStart("build tree");
-    FlatOctTree octTree{model};
+    BreadthFirstOctree octTree{model};
     s2.stopAndOutput();
 
     auto s3 = Stopwatch::createAndStart("tree traversal");
@@ -48,7 +48,7 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
         int end = model.size() * (i + 1) / hwThreadCount;
         threads[i] = std::thread{[&](int start, int end) {
             for (int i = start; i < end; ++i) {
-                model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree2(octTree, FlatOctTree::root, octTree.getLength(), model.pos(i));
+                model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree2(octTree, BreadthFirstOctree::root, octTree.getLength(), model.pos(i));
             }
         }, start, end};
     }

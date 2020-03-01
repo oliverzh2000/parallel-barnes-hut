@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <tuple>
 
 #include "star.h"
 #include "vec3d.h"
@@ -43,6 +44,25 @@ void Model::appendFrom(const Model &other) {
     for (const Star &star: other.getStars()) {
         addStar(star);
     }
+}
+
+std::tuple<Vec3D, double> Model::boundingBox() const {
+    constexpr double minDouble = std::numeric_limits<double>::lowest();
+    constexpr double maxDouble = std::numeric_limits<double>::max();
+    Vec3D minCorner = {maxDouble, maxDouble, maxDouble};
+    Vec3D maxCorner = {minDouble, minDouble, minDouble};
+    for (const Star &star: getStars()) {
+        if (star.pos.x < minCorner.x) minCorner.x = star.pos.x;
+        if (star.pos.y < minCorner.y) minCorner.y = star.pos.y;
+        if (star.pos.z < minCorner.z) minCorner.z = star.pos.z;
+
+        if (star.pos.x > maxCorner.x) maxCorner.x = star.pos.x;
+        if (star.pos.y > maxCorner.y) maxCorner.y = star.pos.y;
+        if (star.pos.z > maxCorner.z) maxCorner.z = star.pos.z;
+    }
+    Vec3D center = minCorner * 0.5 + maxCorner * 0.5;
+    double length = std::max({(center - minCorner).x, (center - minCorner).y, (center - minCorner).z}) * 2;
+    return {center, length};
 }
 
 void Model::serialize(std::ostream &out) {

@@ -4,8 +4,8 @@
 
 #include "force_calc_barnes_hut.h"
 
-#include "oct_tree.h"
-#include "flat_oct_tree.h"
+#include "octree.h"
+#include "breadth_first_octree.h"
 
 #include "../utils/stopwatch.h"
 
@@ -23,7 +23,7 @@ void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
 
     if (!flat) {
         auto s2 = Stopwatch::createAndStart("build tree");
-        OctTree octTree{model};
+        Octree octTree{model};
         s2.stopAndOutput();
 
         auto s3 = Stopwatch::createAndStart("traverse tree");
@@ -34,18 +34,18 @@ void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
         s3.stopAndOutput();
     } else {
         auto s2 = Stopwatch::createAndStart("build tree");
-        FlatOctTree octTree{model};
+        BreadthFirstOctree octTree{model};
         s2.stopAndOutput();
 
         auto s3 = Stopwatch::createAndStart("traverse tree");
         for (int i = 0; i < model.size(); ++i) {
-            model.acc(i) += gravFieldViaTree2(octTree, FlatOctTree::root, octTree.getLength(), model.pos(i));
+            model.acc(i) += gravFieldViaTree2(octTree, BreadthFirstOctree::root, octTree.getLength(), model.pos(i));
         }
         s3.stopAndOutput();
     }
 }
 
-Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double length, const Vec3D &pos) const {
+Vec3D ForceCalcBarnesHut::gravFieldViaTree(const Octree::Node &node, double length, const Vec3D &pos) const {
     // Calculate force directly when:
     // 1) On leaf nodes, since there are no more children.
     // 2) Angular separation of this node's center of mass and pos is less than max threshold.
@@ -63,7 +63,7 @@ Vec3D ForceCalcBarnesHut::gravFieldViaTree(const OctTree::Node &node, double len
     }
 }
 
-Vec3D ForceCalcBarnesHut::gravFieldViaTree2(const FlatOctTree &tree, int node, double length, const Vec3D &pos) const {
+Vec3D ForceCalcBarnesHut::gravFieldViaTree2(const BreadthFirstOctree &tree, int node, double length, const Vec3D &pos) const {
     // Calculate force directly when:
     // 1) On leaf nodes, since there are no more children.
     // 2) Angular separation of this node's center of mass and pos is less than max threshold.

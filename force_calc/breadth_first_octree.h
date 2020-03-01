@@ -2,10 +2,10 @@
 // Created by Oliver Zhang on 2020-01-25.
 //
 
-#ifndef BH_SIM_FLAT_OCT_TREE_H
-#define BH_SIM_FLAT_OCT_TREE_H
+#ifndef BH_SIM_BREADTH_FIRST_OCTREE_H
+#define BH_SIM_BREADTH_FIRST_OCTREE_H
 
-#include "oct_tree.h"
+#include "octree.h"
 
 #include <vector>
 #include <array>
@@ -21,7 +21,7 @@
  * To reduce the pointer chasing codes, the entire tree is flattened in breadth-first order
  * and implemented as an array (or array of fields).
  */
-class FlatOctTree {
+class BreadthFirstOctree {
     Vec3D center;
     double length; // distance from center to any side of the OctTree bounding cube.
 
@@ -36,7 +36,7 @@ class FlatOctTree {
 public:
     static constexpr int root = 0;
 
-    explicit FlatOctTree(const Model &model);
+    explicit BreadthFirstOctree(const Model &model);
 
     double getLength() const;
 
@@ -52,7 +52,7 @@ public:
 
 private:
     struct BFSNode {
-        const OctTree::Node &node;
+        const Octree::Node &node;
         int parentIndex = -1;
         bool isFirstChild = false;
     };
@@ -62,4 +62,4 @@ private:
 };
 
 
-#endif //BH_SIM_FLAT_OCT_TREE_H
+#endif //BH_SIM_BREADTH_FIRST_OCTREE_H

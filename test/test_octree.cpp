@@ -5,7 +5,7 @@
 #include "catch.hpp"
 
 #include "../base/model.h"
-#include "../force_calc/oct_tree.h"
+#include "../force_calc/octree.h"
 
 int theAnswer() {
     return 6 * 9;

@@ -39,6 +39,9 @@ public:
     /// Get the number of Stars this Model currently holds
     int size() const;
 
+    std::tuple<Vec3D, double> boundingBox() const;
+
+    // Full precision serialization.
     void serialize(std::ostream &out);
 
     void deSerialize(std::istream &in);
