@@ -32,7 +32,7 @@ void Stopwatch::start() {
 
 void Stopwatch::stop() {
     if (name != namesInProgress.top()) {
-        throw std::runtime_error("only the most recently started Stopwatch can be stopped");
+        throw std::runtime_error("only the most recently started Stopwatch can be stopped: " + name);
     }
     stop_time = std::chrono::high_resolution_clock::now();
     namesInProgress.pop();
@@ -43,8 +43,8 @@ void Stopwatch::output() const {
         std::chrono::duration duration = std::chrono::duration_cast<std::chrono::duration<double>>(stop_time - start_time);
         std::cout.width(7);
         int indentLevel = namesInProgress.size();
-        std::cout << std::right << int(std::chrono::duration<double, std::milli>(duration).count())
-                  << "ms: " << std::string(" ", 2 * indentLevel) << name << std::endl;
+        std::cout << std::right << int(std::chrono::duration<double, std::milli>(duration).count());
+        std::cout << "ms: " << std::string(2 * indentLevel, ' ') << name << std::endl;
     }
 }
 
