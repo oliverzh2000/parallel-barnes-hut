@@ -10,31 +10,21 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g -pthread")
 add_executable(nbody
         base/main.cpp
         base/model.cpp
-        base/model.h
         base/nbody_sim.cpp
-        base/nbody_sim.h
-        base/star.cpp base/star.h
-        base/vec3d.cpp base/vec3d.h
-        force_calc/flat_oct_tree.cpp
-        force_calc/flat_oct_tree.h
+        base/star.cpp
+        base/vec3d.cpp
+#        force_calc/abstract_octree.cpp
+        force_calc/breadth_first_octree.cpp
+#        force_calc/flat_octree.cpp
         force_calc/force_calc.cpp
-        force_calc/force_calc.h
         force_calc/force_calc_all_pairs.cpp
-        force_calc/force_calc_all_pairs.h
         force_calc/force_calc_barnes_hut.cpp
-        force_calc/force_calc_barnes_hut.h
         force_calc/force_calc_barnes_hut_parallel.cpp
-        force_calc/force_calc_barnes_hut_parallel.h
-        force_calc/oct_tree.cpp
-        force_calc/oct_tree.h
+        force_calc/octree.cpp
         integrator/integrator.cpp
-        integrator/integrator.h
         integrator/integrator_euler.cpp
-        integrator/integrator_euler.h
         integrator/integrator_leapfrog.cpp
-        integrator/integrator_leapfrog.h
         utils/stopwatch.cpp
-        utils/stopwatch.h
         )
 
 

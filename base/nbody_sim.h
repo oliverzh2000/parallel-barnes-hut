@@ -27,7 +27,7 @@ public:
 
     static NBodySim readFromFile(const std::string &simDir);
 
-    void writeToFile(const std::string &simDir, bool alsoWriteHumanReadable);
+    void writeToFile(const std::string &simDir, bool writeHumanReadable, bool writeFullPrecision, bool writeSpaceEfficient);
 
     void advanceSingleStep();
 

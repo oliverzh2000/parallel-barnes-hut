@@ -139,6 +139,14 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
 
         std::ifstream frameIfs{simDir + "/frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data", std::ios::binary};
         sim.model.deSerialize(frameIfs);
+    } else if (starsInitMode == "ReadStarsFromLastestShortFrame") {
+        std::ifstream frameNumberIfs{simDir + "/latest-frame-index.txt"};
+        int latestBinaryFrameNumber;
+        frameNumberIfs >> latestBinaryFrameNumber;
+        sim.integrator->setTimestepCount(latestBinaryFrameNumber);
+
+        std::ifstream frameIfs{simDir + "/short-frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data", std::ios::binary};
+        sim.model.deSerializeSpaceEfficient(frameIfs);
     } else if (starsInitMode == "CreateSpiralGalaxy") {
         auto n = readParamByName<int>(in, "n");
         auto centerPos = readVec3DParamByName(in, "centerPos");
@@ -154,20 +162,22 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
     return sim;
 }
 
-void NBodySim::writeToFile(const std::string &simDir, bool alsoWriteHumanReadable) {
-    std::ofstream frameOfs{simDir + "/frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data", std::ios::binary};
-    model.serialize(frameOfs);
-    if (alsoWriteHumanReadable) {
-        std::ofstream humanReadableFrameOfs{
-                simDir + "/hr-frames/frame-" + std::to_string(integrator->getTimestepCount()) + ".data"};
-        unsigned long long int n = model.getStars().size();
-        humanReadableFrameOfs << n << std::endl;
-        for (const Star &star: model.getStars()) {
-            humanReadableFrameOfs.precision(std::numeric_limits<double>::max_digits10 + 2);
-            humanReadableFrameOfs << star.pos.x << " " << star.pos.y << " " << star.pos.z << " "
-                                  << star.vel.x << " " << star.vel.y << " " << star.vel.z << " "
-                                  << star.mass << std::endl;
-        }
+void NBodySim::writeToFile(const std::string &simDir, bool writeHumanReadable, bool writeFullPrecision, bool writeSpaceEfficient) {
+    if (!writeHumanReadable && !writeFullPrecision && !writeSpaceEfficient) {
+        throw std::runtime_error("no write performed");
+    }
+    std::string outFileName = "frame-" + std::to_string(integrator->getTimestepCount())  + ".data";
+    if (writeFullPrecision) {
+        std::ofstream frameOfs{simDir + "/frames/" + outFileName, std::ios::binary};
+        model.serialize(frameOfs);
+    }
+    if (writeSpaceEfficient) {
+        std::ofstream frameOfs{simDir + "/short-frames/" + outFileName, std::ios::binary};
+        model.serializeSpaceEfficient(frameOfs);
+    }
+    if (writeHumanReadable) {
+        std::ofstream frameOfs{simDir + "/hr-frames/" + outFileName};
+        model.serializeHumanReadable(frameOfs);
     }
     std::ofstream latestFrameIndexOfs{simDir + "/latest-frame-index.txt"};
     latestFrameIndexOfs << integrator->getTimestepCount() << std::endl;

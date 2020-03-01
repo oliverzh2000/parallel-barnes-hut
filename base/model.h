@@ -40,7 +40,19 @@ public:
     int size() const;
 
     void serialize(std::ostream &out);
+
     void deSerialize(std::istream &in);
+
+    // Stores only 3 16bit ints for the position, and 1 byte for the mass.
+    // Values stored are scaled.
+    // Useful for visualization purposes.
+    void serializeSpaceEfficient(std::ostream &out);
+
+    void deSerializeSpaceEfficient(std::istream &in);
+
+    void serializeHumanReadable(std::ostream &out);
+
+    void deSerializeHumanReadable(std::istream &in);
 };
 
 
