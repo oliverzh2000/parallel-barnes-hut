@@ -14,8 +14,11 @@ int main(int argc, char *argv[]) {
     std::cout << "3D N-body simulation with Barnes-Hut, by Oliver Zhang." << std::endl;
 
     std::string simDir;
-    int n = 1;
-    int nPerWrite = 1;
+    int steps = 1;
+    int framesPerFullPrecisionWrite = 15; // every N frames, write full precision frame
+    bool doHumanReadableWrite = false;
+    bool doSpaceEfficientWrite = true;
+
     bool verbose = false;
     bool silent = false;
 
@@ -31,7 +34,7 @@ int main(int argc, char *argv[]) {
             i++;
             continue;
         } else if (std::string{argv[i]} == "--steps") {
-            n = std::stoi(argv[i + 1]);
+            steps = std::stoi(argv[i + 1]);
             i++;
             continue;
         } else if (std::string{argv[i]} == "--verbose") {
@@ -45,6 +48,13 @@ int main(int argc, char *argv[]) {
             continue;
         } else if (std::string{argv[i]} == "--version") {
             showVersion = true;
+            continue;
+        } else if (std::string{argv[i]} == "--human-readable-write") {
+            doHumanReadableWrite = true;
+            continue;
+        } else if (std::string{argv[i]} == "--no-space-efficient-write") {
+            doSpaceEfficientWrite = false;
+            framesPerFullPrecisionWrite = 1;
             continue;
         } else {
             failedArgParse = true;
@@ -60,7 +70,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Version=1.0.0" << std::endl;
         return 0;
     }
-    if (n < 1) {
+    if (steps < 1) {
         std::cout << "Fatal error: must run for at least one iteration step (use --steps to specify)" << std::endl;
         failedArgParse = true;
     }
@@ -90,13 +100,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < steps; ++i) {
         sim->advanceSingleStep();
-        if (i % nPerWrite == 0) {
-            sim->writeToFile(simDir, false);
-            if (!silent) {
-                std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(n) << " (" << (i + 1) / double(n) * 100 << "%)" << std::endl;
-            }
+        sim->writeToFile(simDir, doHumanReadableWrite, (i % framesPerFullPrecisionWrite == 0), doSpaceEfficientWrite);
+        if (!silent) {
+            std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(steps) << " (" << (i + 1) / double(steps) * 100 << "%)" << std::endl;
         }
     }
 
