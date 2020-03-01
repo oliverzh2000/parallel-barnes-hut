@@ -1,5 +1,5 @@
 # Parallel 3D Barnes-Hut N-Body Simulation
-#### Version 1.0.0
+#### Version 2.0.0
 
 A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
 
@@ -38,7 +38,7 @@ forceCalcType: 'ForceCalcAllPairs' | 'ForceCalcBarnesHut' | 'ForceCalcBarnesHutP
     softening: positive-decimal
     theta: positive-decimal-value  *1.
 
-starsInitMode: 'readStarsInline' | 'readStarsFromLatestBinaryFrame' | createSpiralGalaxy'
+starsInitMode: 'readStarsInline' | 'readStarsFromLatestBinaryFrame' | 'readStarsFromLatestShortFrame' |createSpiralGalaxy'
     n: number-of-stars
     pos-x pos-y pos-z vel-x vel-y vel-z mass
     ... 
