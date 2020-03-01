@@ -2,13 +2,12 @@
 // Created by Oliver Zhang on 2019-12-20.
 //
 
-#include <iostream>
-
+#include "force_calc/force_calc.h"
+#include "integrator/integrator.h"
 #include "nbody_sim.h"
-#include "star.h"
-#include "../integrator/integrator.h"
-#include "../force_calc/force_calc.h"
-#include "../utils/stopwatch.h"
+#include "utils/stopwatch.h"
+
+#include <iostream>
 
 int main(int argc, char *argv[]) {
     std::cout << "3D N-body simulation with Barnes-Hut, by Oliver Zhang." << std::endl;
@@ -107,7 +106,8 @@ int main(int argc, char *argv[]) {
         sim->writeToFile(simDir, writeHumanReadable, writeFullPrecision, writeSpaceEfficient);
         s2.stopAndOutput();
         if (!silent) {
-            std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(steps) << " (" << (i + 1) / double(steps) * 100 << "%)" << std::endl;
+            std::cout << "Progress: " << std::to_string(i + 1) << "/" + std::to_string(steps) << " (" << (i + 1) / double(steps) * 100
+                      << "%)" << std::endl;
         }
     }
 

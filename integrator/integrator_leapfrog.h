@@ -8,7 +8,7 @@
 #include "integrator.h"
 
 class IntegratorLeapfrog : public Integrator {
-public:
+  public:
     explicit IntegratorLeapfrog(double timestep);
 
     IntegratorLeapfrog(double timestep, int timestepCount);
@@ -16,5 +16,4 @@ public:
     void advanceSingleStep(const ForceCalc &forceCalc, Model &model) override;
 };
 
-
-#endif //BH_SIM_INTEGRATORLEAPFROG_H
+#endif // BH_SIM_INTEGRATORLEAPFROG_H

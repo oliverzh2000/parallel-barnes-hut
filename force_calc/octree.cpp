@@ -3,14 +3,14 @@
 //
 
 #include "octree.h"
-#include <tuple>
 
-#include <thread>
-#include <limits>
+#include "base/model.h"
+
 #include <algorithm>
 #include <assert.h>
-
-#include "../base/model.h"
+#include <limits>
+#include <thread>
+#include <tuple>
 
 Octree::Octree(const Model &model) {
     auto [center, length] = model.boundingBox();
@@ -23,34 +23,34 @@ Octree::Octree(const Model &model) {
     hwThreadCount = 1;
 
     if (hwThreadCount == 8) {
-//        // If there are 8 threads, let each one build a tree in a quadrant, then join them into the final root.
-//        std::array<Model, 8> subModels;
-//        std::array<OctTree *, 8> subTrees{nullptr};
-//        for (const Star &star: model.getStars()) {
-//            subModels.at(getOctant(center, star.pos)).addStar(star);
-//        }
-//        for (int i = 0; i < 8; ++i) {
-//            if (subModels[i].size() > 0) {
-//                subTrees[i]= new OctTree(subModels[i], centerOfOctant(center, length, i), length * 0.5);
-//                std::cout << "i: " << i << std::endl;
-//                subTrees[i]->debugPrint();
-//            }
-//        }
-//        Vec3D centerOfMass = {0, 0, 0};
-//        double totalMass = 0;
-//        for (int i = 0; i < 8; ++i) {
-//            if (subModels[i].size() > 0) {
-//                centerOfMass += subTrees[i]->root.centerOfMass * subTrees[i]->root.totalMass;
-//                totalMass += subTrees[i]->root.totalMass;
-//            }
-//        }
-//        root = Node{centerOfMass * (1 / totalMass), totalMass};
-//        root.children = new Node *[8]();
-//        for (int i = 0; i < 8; ++i) {
-//            if (subModels[i].size() > 0) {
-//                root.children[i] = &subTrees[i]->root;
-//            }
-//        }
+        //        // If there are 8 threads, let each one build a tree in a quadrant, then join them into the final root.
+        //        std::array<Model, 8> subModels;
+        //        std::array<OctTree *, 8> subTrees{nullptr};
+        //        for (const Star &star: model.getStars()) {
+        //            subModels.at(getOctant(center, star.pos)).addStar(star);
+        //        }
+        //        for (int i = 0; i < 8; ++i) {
+        //            if (subModels[i].size() > 0) {
+        //                subTrees[i]= new OctTree(subModels[i], centerOfOctant(center, length, i), length * 0.5);
+        //                std::cout << "i: " << i << std::endl;
+        //                subTrees[i]->debugPrint();
+        //            }
+        //        }
+        //        Vec3D centerOfMass = {0, 0, 0};
+        //        double totalMass = 0;
+        //        for (int i = 0; i < 8; ++i) {
+        //            if (subModels[i].size() > 0) {
+        //                centerOfMass += subTrees[i]->root.centerOfMass * subTrees[i]->root.totalMass;
+        //                totalMass += subTrees[i]->root.totalMass;
+        //            }
+        //        }
+        //        root = Node{centerOfMass * (1 / totalMass), totalMass};
+        //        root.children = new Node *[8]();
+        //        for (int i = 0; i < 8; ++i) {
+        //            if (subModels[i].size() > 0) {
+        //                root.children[i] = &subTrees[i]->root;
+        //            }
+        //        }
     } else {
         // Insert all the positions and masses directly into the root tree node.
         initOctants(model, center, length);
@@ -62,13 +62,12 @@ Octree::Octree(const Model &model, const Vec3D &center, double length) {
 }
 
 void Octree::initOctants(const Model &model, const Vec3D &center, double length) {
-    for (const Star &star: model.getStars()) {
+    for (const Star &star : model.getStars()) {
         root.addChild(center, length, star.pos, star.mass);
     }
 }
 
-Octree::Node::Node(const Vec3D &centerOfMass, double mass)
-        : children(), centerOfMass{centerOfMass}, totalMass{mass} {}
+Octree::Node::Node(const Vec3D &centerOfMass, double mass) : children(), centerOfMass{centerOfMass}, totalMass{mass} {}
 
 Octree::Node::~Node() {
     if (!isLeaf()) {
@@ -79,7 +78,7 @@ Octree::Node::~Node() {
 }
 
 void Octree::Node::addChild(const Vec3D &center, double length, const Vec3D &pos, double mass) {
-    assert (isInBounds(center, length, pos));
+    assert(isInBounds(center, length, pos));
     int octant = getOctant(center, pos);
     if (isEmpty()) {
         // This is a special case for the root node. No other nodes should be empty.

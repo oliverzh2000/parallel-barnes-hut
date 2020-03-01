@@ -8,7 +8,7 @@
 #include "force_calc_barnes_hut.h"
 
 class ForceCalcBarnesHutParallel : public ForceCalcBarnesHut {
-public:
+  public:
     explicit ForceCalcBarnesHutParallel(double gravConst, double softening, double theta);
 
     /// 1) Build oct-tree on one thread.
@@ -16,5 +16,4 @@ public:
     void updateNetAccel(Model &model) const override;
 };
 
-
-#endif //BH_SIM_FORCE_CALC_BARNES_HUT_PARALLEL_H
+#endif // BH_SIM_FORCE_CALC_BARNES_HUT_PARALLEL_H

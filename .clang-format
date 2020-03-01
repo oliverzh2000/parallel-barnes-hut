@@ -1,0 +1,15 @@
+Language:   Cpp
+SortIncludes: true
+IndentWidth: 4
+AlignTrailingComments: true
+ColumnLimit: 140
+IncludeBlocks: Regroup
+BinPackParameters: true
+BinPackArguments: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false
+BreakConstructorInitializers: AfterColon
+AlwaysBreakTemplateDeclarations: Yes

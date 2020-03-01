@@ -5,13 +5,13 @@
 #ifndef BH_SIM_BREADTH_FIRST_OCTREE_H
 #define BH_SIM_BREADTH_FIRST_OCTREE_H
 
+#include "base/model.h"
+#include "base/star.h"
+#include "base/vec3d.h"
 #include "octree.h"
 
-#include <vector>
 #include <array>
-#include "../base/vec3d.h"
-#include "../base/star.h"
-#include "../base/model.h"
+#include <vector>
 
 /**
  * Oct-tree data structure to enable efficient force computation with Barnes-Hut algorithm
@@ -28,12 +28,12 @@ class BreadthFirstOctree {
     std::vector<Vec3D> centerOfMasses;
     std::vector<double> totalMasses;
 
-    // Since the tree is stored in a breadth-first ordering, we can guarantee that the children of each node are stored contiguously, and in order.
-    // This means that only the index of the first child needs to be stored.
+    // Since the tree is stored in a breadth-first ordering, we can guarantee that the children of each node are stored contiguously, and in
+    // order. This means that only the index of the first child needs to be stored.
     std::vector<int> firstChildIndices;
     std::vector<uint8_t> childrenCounts;
 
-public:
+  public:
     static constexpr int root = 0;
 
     explicit BreadthFirstOctree(const Model &model);
@@ -50,7 +50,7 @@ public:
 
     bool isLeaf(int index) const;
 
-private:
+  private:
     struct BFSNode {
         const Octree::Node &node;
         int parentIndex = -1;
@@ -61,5 +61,4 @@ private:
     int newNodeAtEnd(const Vec3D &pos, double mass);
 };
 
-
-#endif //BH_SIM_BREADTH_FIRST_OCTREE_H
+#endif // BH_SIM_BREADTH_FIRST_OCTREE_H

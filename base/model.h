@@ -5,11 +5,10 @@
 #ifndef BH_SIM_MODEL_H
 #define BH_SIM_MODEL_H
 
-
-#include <vector>
-#include <iostream>
-
 #include "vec3d.h"
+
+#include <iostream>
+#include <vector>
 
 class Star;
 
@@ -19,7 +18,7 @@ class Star;
 class Model final {
     std::vector<Star> stars;
 
-public:
+  public:
     /// Add a new star into this model.
     void addStar(Star star);
 
@@ -58,5 +57,4 @@ public:
     void deSerializeHumanReadable(std::istream &in);
 };
 
-
-#endif //BH_SIM_MODEL_H
+#endif // BH_SIM_MODEL_H

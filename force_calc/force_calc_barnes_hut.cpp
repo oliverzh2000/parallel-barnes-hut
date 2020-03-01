@@ -4,13 +4,11 @@
 
 #include "force_calc_barnes_hut.h"
 
-#include "octree.h"
 #include "breadth_first_octree.h"
+#include "octree.h"
+#include "utils/stopwatch.h"
 
-#include "../utils/stopwatch.h"
-
-ForceCalcBarnesHut::ForceCalcBarnesHut(double gravConst, double softening, double theta)
-        : ForceCalc(gravConst, softening), theta{theta} {}
+ForceCalcBarnesHut::ForceCalcBarnesHut(double gravConst, double softening, double theta) : ForceCalc(gravConst, softening), theta{theta} {}
 
 void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
     auto s1 = Stopwatch::createAndStart("acc = 0");

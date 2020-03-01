@@ -4,11 +4,9 @@
 
 #include "integrator.h"
 
-Integrator::Integrator(double timestep)
-        : timestep{timestep} {}
+Integrator::Integrator(double timestep) : timestep{timestep} {}
 
-Integrator::Integrator(double timestep, int timestepCount)
-        : timestep{timestep}, timestepCount{timestepCount} {}
+Integrator::Integrator(double timestep, int timestepCount) : timestep{timestep}, timestepCount{timestepCount} {}
 
 double Integrator::elapsedTime() {
     return timestepCount * timestep;

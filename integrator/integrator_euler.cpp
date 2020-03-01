@@ -3,14 +3,13 @@
 //
 
 #include "integrator_euler.h"
-#include "../base/model.h"
-#include "../force_calc/force_calc.h"
 
-IntegratorEuler::IntegratorEuler(double timestep)
-        : Integrator(timestep) {}
+#include "base/model.h"
+#include "force_calc/force_calc.h"
 
-IntegratorEuler::IntegratorEuler(double timestep, int timestepCount)
-        : Integrator(timestep, timestepCount) {}
+IntegratorEuler::IntegratorEuler(double timestep) : Integrator(timestep) {}
+
+IntegratorEuler::IntegratorEuler(double timestep, int timestepCount) : Integrator(timestep, timestepCount) {}
 
 void IntegratorEuler::advanceSingleStep(const ForceCalc &forceCalc, Model &model) {
     forceCalc.updateNetAccel(model);

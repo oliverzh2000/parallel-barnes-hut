@@ -8,7 +8,7 @@
 #include "integrator.h"
 
 class IntegratorEuler : public Integrator {
-public:
+  public:
     explicit IntegratorEuler(double timestep);
 
     IntegratorEuler(double timestep, int timestepCount);
@@ -16,5 +16,4 @@ public:
     void advanceSingleStep(const ForceCalc &forceCalc, Model &model) override;
 };
 
-
-#endif //BH_SIM_INTEGRATOREULER_H
+#endif // BH_SIM_INTEGRATOREULER_H

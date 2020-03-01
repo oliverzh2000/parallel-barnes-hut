@@ -4,13 +4,13 @@
 
 #include "model.h"
 
+#include "star.h"
+#include "vec3d.h"
+
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <tuple>
-
-#include "star.h"
-#include "vec3d.h"
 
 void Model::addStar(Star star) {
     stars.emplace_back(star);
@@ -41,7 +41,7 @@ double &Model::mass(int i) {
 }
 
 void Model::appendFrom(const Model &other) {
-    for (const Star &star: other.getStars()) {
+    for (const Star &star : other.getStars()) {
         addStar(star);
     }
 }
@@ -51,7 +51,7 @@ std::tuple<Vec3D, double> Model::boundingBox() const {
     constexpr double maxDouble = std::numeric_limits<double>::max();
     Vec3D minCorner = {maxDouble, maxDouble, maxDouble};
     Vec3D maxCorner = {minDouble, minDouble, minDouble};
-    for (const Star &star: getStars()) {
+    for (const Star &star : getStars()) {
         if (star.pos.x < minCorner.x) minCorner.x = star.pos.x;
         if (star.pos.y < minCorner.y) minCorner.y = star.pos.y;
         if (star.pos.z < minCorner.z) minCorner.z = star.pos.z;
@@ -67,14 +67,8 @@ std::tuple<Vec3D, double> Model::boundingBox() const {
 
 void Model::serializeFullPrecision(std::ostream &out) {
     out << size();
-    for (const Star &star: stars) {
-        double starData[7]{star.pos.x,
-                           star.pos.y,
-                           star.pos.z,
-                           star.vel.x,
-                           star.vel.y,
-                           star.vel.z,
-                           star.mass};
+    for (const Star &star : stars) {
+        double starData[7]{star.pos.x, star.pos.y, star.pos.z, star.vel.x, star.vel.y, star.vel.z, star.mass};
         out.write(reinterpret_cast<char *>(starData), sizeof(starData));
     }
 }
@@ -86,12 +80,8 @@ void Model::deSerialize(std::istream &in) {
         char rawData[7 * sizeof(double)];
         in.read(rawData, sizeof(rawData));
         double *starData = reinterpret_cast<double *>(rawData);
-        addStar({{starData[0],
-                  starData[1],
-                  starData[2]},
-                 {starData[3],
-                  starData[4],
-                  starData[5]},
+        addStar({{starData[0], starData[1], starData[2]},
+                 {starData[3], starData[4], starData[5]},
                  starData[6]});
     }
 }
@@ -100,7 +90,7 @@ void Model::serializeSpaceEfficient(std::ostream &out) {
     out << size() << " ";
 
     // Determine the largest abs value possible coordinate value.
-    auto[center, length] = boundingBox();
+    auto [center, length] = boundingBox();
     double maxAbsX = std::abs(center.x + length / 2 * (center.x > 0 ? 1 : -1));
     double maxAbsY = std::abs(center.y + length / 2 * (center.y > 0 ? 1 : -1));
     double maxAbsZ = std::abs(center.z + length / 2 * (center.z > 0 ? 1 : -1));
@@ -109,14 +99,14 @@ void Model::serializeSpaceEfficient(std::ostream &out) {
 
     // Determine the largest possible mass.
     double maxMass = 0;
-    for (const Star &star: getStars()) {
+    for (const Star &star : getStars()) {
         if (star.mass > maxMass) {
             maxMass = star.mass;
         }
     }
     out << maxMass;
 
-    for (const Star &star: stars) {
+    for (const Star &star : stars) {
         Vec3D scaledPos = star.pos * (1 / maxAbsCoord) * std::numeric_limits<int16_t>::max();
         int16_t posData[3]{static_cast<int16_t>(std::round(scaledPos.x)),
                            static_cast<int16_t>(std::round(scaledPos.y)),
@@ -145,7 +135,7 @@ void Model::deSerializeSpaceEfficient(std::istream &in) {
         Vec3D scaledPos = Vec3D{static_cast<double>(unscaledPos[0]),
                                 static_cast<double>(unscaledPos[1]),
                                 static_cast<double>(unscaledPos[2])} *
-                          (1 / static_cast<double>(std::numeric_limits<int16_t>::max())) * maxAbsCoord;
+            (1 / static_cast<double>(std::numeric_limits<int16_t>::max())) * maxAbsCoord;
         double scaledMass = static_cast<double>(unscaledMass[0]) / std::numeric_limits<uint8_t>::max() * maxMass;
         addStar({scaledPos, {0, 0, 0}, scaledMass});
     }
@@ -153,10 +143,9 @@ void Model::deSerializeSpaceEfficient(std::istream &in) {
 
 void Model::serializeHumanReadable(std::ostream &out) {
     out << getStars().size() << std::endl;
-    for (const Star &star: getStars()) {
+    for (const Star &star : getStars()) {
         out.precision(std::numeric_limits<double>::max_digits10 + 2);
-        out << star.pos.x << " " << star.pos.y << " " << star.pos.z << " "
-            << star.vel.x << " " << star.vel.y << " " << star.vel.z << " "
+        out << star.pos.x << " " << star.pos.y << " " << star.pos.z << " " << star.vel.x << " " << star.vel.y << " " << star.vel.z << " "
             << star.mass << std::endl;
     }
 }

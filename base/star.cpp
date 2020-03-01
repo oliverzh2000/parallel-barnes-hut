@@ -4,6 +4,4 @@
 
 #include "star.h"
 
-Star::Star(Vec3D pos, Vec3D vel, double mass)
-        : pos{pos}, vel{vel}, acc{Vec3D{0, 0, 0}}, mass{mass} {}
-
+Star::Star(Vec3D pos, Vec3D vel, double mass) : pos{pos}, vel{vel}, acc{Vec3D{0, 0, 0}}, mass{mass} {}

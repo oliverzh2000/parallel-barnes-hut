@@ -5,12 +5,12 @@
 #ifndef BH_SIM_SIMULATION_H
 #define BH_SIM_SIMULATION_H
 
-#include <vector>
+#include "base/model.h"
+#include "model.h"
+
 #include <iostream>
 #include <memory>
-
-#include "model.h"
-#include "../base/model.h"
+#include <vector>
 
 class Vec3D;
 class Integrator;
@@ -22,7 +22,7 @@ class NBodySim final {
     std::unique_ptr<Integrator> integrator;
     std::unique_ptr<ForceCalc> forceCalc;
 
-public:
+  public:
     NBodySim(Integrator *integrator, ForceCalc *forceCalc);
 
     static NBodySim readFromFile(const std::string &simDir);
@@ -31,23 +31,21 @@ public:
 
     void advanceSingleStep();
 
-    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass,
-                                    double massStdDev, int seed);
+    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass, double massStdDev, int seed);
 
     void addStar(Star star);
 
-private:
+  private:
     template <typename T>
-    static T readParamByName(std::istream &in, const std::string& expectedName);
+    static T readParamByName(std::istream &in, const std::string &expectedName);
 
     // TODO: merge the separate Vec3D method if possible.
-    static Vec3D readVec3DParamByName(std::istream &in, const std::string& expectedName);
+    static Vec3D readVec3DParamByName(std::istream &in, const std::string &expectedName);
 
     template <typename T>
-    static void writeParamWithName(std::ostream &out, const std::string& name, T value, int indentLevel);
+    static void writeParamWithName(std::ostream &out, const std::string &name, T value, int indentLevel);
 
-    static void verifyParamName(std::istream &in, const std::string& expectedName);
+    static void verifyParamName(std::istream &in, const std::string &expectedName);
 };
 
-
-#endif //BH_SIM_SIMULATION_H
+#endif // BH_SIM_SIMULATION_H

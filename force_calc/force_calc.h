@@ -5,8 +5,8 @@
 #ifndef BH_SIM_FORCECALCULATOR_H
 #define BH_SIM_FORCECALCULATOR_H
 
-#include "../base/vec3d.h"
-#include "../base/star.h"
+#include "base/star.h"
+#include "base/vec3d.h"
 
 class Model;
 
@@ -14,11 +14,11 @@ class Model;
  * Abstract base class for force/acceleration computation on a Model of Stars.
  */
 class ForceCalc {
-protected:
+  protected:
     double gravConst;
     double softeningSquared;
 
-public:
+  public:
     explicit ForceCalc(double gravConst, double softening);
 
     /// Compute the acceleration of each star in the given Model and write it in each Star's corresponding acc field.
@@ -34,5 +34,4 @@ public:
     Vec3D gravFieldDueToSingleObject(const Vec3D &sourcePos, double mass, const Vec3D &pos) const;
 };
 
-
-#endif //BH_SIM_FORCECALCULATOR_H
+#endif // BH_SIM_FORCECALCULATOR_H

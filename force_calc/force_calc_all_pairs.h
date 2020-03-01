@@ -8,13 +8,11 @@
 #include "force_calc.h"
 
 class ForceCalcAllPairs final : public ForceCalc {
-public:
+  public:
     explicit ForceCalcAllPairs(double gravConst, double softening);
 
     /// Runs in quadratic time.
     void updateNetAccel(Model &model) const override;
-
 };
 
-
-#endif //BH_SIM_BRUTEFORCECALC_H
+#endif // BH_SIM_BRUTEFORCECALC_H

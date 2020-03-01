@@ -15,11 +15,11 @@ class ForceCalc;
  * to update velocity to update position for a Model of Stars.
  */
 class Integrator {
-protected:
+  protected:
     double timestep;
     int timestepCount = 0;
 
-public:
+  public:
     explicit Integrator(double timestep);
 
     Integrator(double timestep, int timestepCount);
@@ -38,5 +38,4 @@ public:
     void setTimestepCount(int count);
 };
 
-
-#endif //BH_SIM_INTEGRATOR_H
+#endif // BH_SIM_INTEGRATOR_H

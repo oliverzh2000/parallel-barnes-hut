@@ -4,12 +4,11 @@
 
 #include "breadth_first_octree.h"
 
-#include <algorithm>
-#include <tuple>
-#include <queue>
-
 #include "octree.h"
-#include "../utils/stopwatch.h"
+#include "utils/stopwatch.h"
+
+#include <queue>
+#include <tuple>
 
 BreadthFirstOctree::BreadthFirstOctree(const Model &model) {
     // Construct a normal oct-tree then flatten it breadth-first.
@@ -86,4 +85,3 @@ uint8_t BreadthFirstOctree::childrenCount(int index) const {
 bool BreadthFirstOctree::isLeaf(int index) const {
     return childrenCounts.at(index) == 0;
 }
-

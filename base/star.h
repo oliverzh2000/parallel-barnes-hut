@@ -16,5 +16,4 @@ struct Star {
     Star(Vec3D pos, Vec3D vel, double mass);
 };
 
-
-#endif //BH_SIM_STAR_H
+#endif // BH_SIM_STAR_H

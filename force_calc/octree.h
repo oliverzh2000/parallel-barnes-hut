@@ -5,11 +5,11 @@
 #ifndef BH_SIM_OCTTREE_H
 #define BH_SIM_OCTTREE_H
 
-#include <vector>
+#include "base/model.h"
+#include "base/star.h"
+#include "base/vec3d.h"
 
-#include "../base/vec3d.h"
-#include "../base/star.h"
-#include "../base/model.h"
+#include <vector>
 
 /**
  * Oct-tree data structure to enable efficient force computation with Barnes-Hut algorithm
@@ -20,13 +20,13 @@ class Octree {
     Vec3D center = {0, 0, 0};
     double length = 0; // Side length of the Octree bounding cube.
 
-public:
+  public:
     class Node final {
         Node *children[8];
         Vec3D centerOfMass;
         double totalMass;
 
-    public:
+      public:
         /// Construct a new Node with one child located at the given center and given mass.
         explicit Node(const Vec3D &centerOfMass = {0, 0, 0}, double mass = 0);
 
@@ -60,7 +60,7 @@ public:
 
     Node root = Node{Vec3D{}};
 
-public:
+  public:
     explicit Octree(const Model &model);
 
     Octree(const Model &model, const Vec3D &center, double length);
@@ -72,7 +72,7 @@ public:
     friend class ForceCalcBarnesHutParallel;
     friend class BreadthFirstOctree;
 
-private:
+  private:
     void initOctants(const Model &model, const Vec3D &center, double length);
 
     /// Return a int between 0 and 7 that uniquely identifies
@@ -88,5 +88,4 @@ private:
     static bool isInBounds(const Vec3D &center, double length, const Vec3D &pos);
 };
 
-
-#endif //BH_SIM_OCTTREE_H
+#endif // BH_SIM_OCTTREE_H

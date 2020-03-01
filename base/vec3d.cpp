@@ -2,8 +2,9 @@
 // Created by Oliver Zhang on 2019-12-20.
 //
 
-#include <cmath>
 #include "vec3d.h"
+
+#include <cmath>
 
 double Vec3D::distanceTo(const Vec3D &other) const {
     return std::sqrt((this->x - other.x) * (this->x - other.x) +

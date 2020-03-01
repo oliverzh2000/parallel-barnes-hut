@@ -4,29 +4,28 @@
 
 #include "nbody_sim.h"
 
-#include <utility>
+#include "force_calc/force_calc.h"
+#include "force_calc/force_calc_all_pairs.h"
+#include "force_calc/force_calc_barnes_hut.h"
+#include "force_calc/force_calc_barnes_hut_parallel.h"
+#include "integrator/integrator.h"
+#include "integrator/integrator_euler.h"
+#include "integrator/integrator_leapfrog.h"
+
 #include <fstream>
 #include <limits>
 #include <random>
+#include <utility>
 
-#include "../integrator/integrator.h"
-#include "../force_calc/force_calc.h"
-#include "../force_calc/force_calc_all_pairs.h"
-#include "../integrator/integrator_euler.h"
-#include "../force_calc/force_calc_barnes_hut.h"
-#include "../integrator/integrator_leapfrog.h"
-#include "../force_calc/force_calc_barnes_hut_parallel.h"
-
-NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc)
-        : integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
+NBodySim::NBodySim(Integrator *integrator, ForceCalc *forceCalc) :
+    integrator{std::unique_ptr<Integrator>(integrator)}, forceCalc{std::unique_ptr<ForceCalc>(forceCalc)} {}
 
 void NBodySim::advanceSingleStep() {
     integrator->advanceSingleStep(*forceCalc, model);
 }
 
-void
-NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass,
-                                 double massStdDev, int seed) {
+void NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass, double massStdDev,
+                                      int seed) {
     std::default_random_engine uniformRng{seed};
     std::normal_distribution<double> radialDistanceGenerator{0, radialStdDev};
     std::normal_distribution<double> massGenerator{avgMass, massStdDev};
@@ -36,16 +35,14 @@ NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double
     // 1) Randomly generate the positions of the stars.
     for (int i = 0; i < n - 1; ++i) {
         newGalaxy.addStar(
-                // TODO: make this a disk after debugging done.
-                {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng),
-                       radialDistanceGenerator(uniformRng)},
-                 Vec3D{0, 0, 0},
-                 massGenerator(uniformRng)});
+            // TODO: make this a disk after debugging done.
+            {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng)},
+             Vec3D{0, 0, 0}, massGenerator(uniformRng)});
     }
 
     // 2) Add the supermassive black hole in the center.
     double totalMass = 0;
-    for (const Star &star: newGalaxy.getStars()) {
+    for (const Star &star : newGalaxy.getStars()) {
         totalMass += star.mass;
     }
     newGalaxy.addStar({Vec3D{0, 0, 0}, Vec3D{0, 0, 0}, totalMass});
@@ -58,7 +55,6 @@ NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double
 void NBodySim::addStar(Star star) {
     model.addStar(star);
 }
-
 
 NBodySim NBodySim::readFromFile(const std::string &simDir) {
     std::ifstream in{simDir + "/init.txt"};
@@ -166,7 +162,7 @@ void NBodySim::writeToFile(const std::string &simDir, bool writeHumanReadable, b
     if (!writeHumanReadable && !writeFullPrecision && !writeSpaceEfficient) {
         throw std::runtime_error("no write performed");
     }
-    std::string outFileName = "frame-" + std::to_string(integrator->getTimestepCount())  + ".data";
+    std::string outFileName = "frame-" + std::to_string(integrator->getTimestepCount()) + ".data";
     if (writeFullPrecision) {
         std::ofstream frameOfs{simDir + "/frames/" + outFileName, std::ios::binary};
         model.serializeFullPrecision(frameOfs);
@@ -183,29 +179,27 @@ void NBodySim::writeToFile(const std::string &simDir, bool writeHumanReadable, b
     latestFrameIndexOfs << integrator->getTimestepCount() << std::endl;
 }
 
-template<typename T>
-T NBodySim::readParamByName(std::istream &in, const std::string& expectedName) {
+template <typename T> T NBodySim::readParamByName(std::istream &in, const std::string &expectedName) {
     verifyParamName(in, expectedName);
     T value;
     in >> value;
     return value;
 }
 
-Vec3D NBodySim::readVec3DParamByName(std::istream &in, const std::string& expectedName) {
+Vec3D NBodySim::readVec3DParamByName(std::istream &in, const std::string &expectedName) {
     verifyParamName(in, expectedName);
     return Vec3D{readParamByName<double>(in, "x"),
                  readParamByName<double>(in, "y"),
                  readParamByName<double>(in, "z")};
 }
 
-template<typename T>
-void NBodySim::writeParamWithName(std::ostream &out, const std::string& name, T value, int indentLevel) {
+template <typename T> void NBodySim::writeParamWithName(std::ostream &out, const std::string &name, T value, int indentLevel) {
     int charsPerIndent = 4;
     out << std::string(charsPerIndent * indentLevel, ' ');
     out << name << ": " << value << std::endl;
 }
 
-void NBodySim::verifyParamName(std::istream &in, const std::string& expectedName) {
+void NBodySim::verifyParamName(std::istream &in, const std::string &expectedName) {
     std::string nameWithColon;
     in >> nameWithColon;
     if (nameWithColon.substr(0, nameWithColon.size() - 1) != expectedName) {

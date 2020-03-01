@@ -4,13 +4,13 @@
 
 #include "force_calc_barnes_hut_parallel.h"
 
+#include "breadth_first_octree.h"
+#include "utils/stopwatch.h"
+
 #include <thread>
 
-#include "../utils/stopwatch.h"
-#include "breadth_first_octree.h"
-
-ForceCalcBarnesHutParallel::ForceCalcBarnesHutParallel(double gravConst, double softening, double theta)
-        : ForceCalcBarnesHut(gravConst, softening, theta) {}
+ForceCalcBarnesHutParallel::ForceCalcBarnesHutParallel(double gravConst, double softening, double theta) :
+    ForceCalcBarnesHut(gravConst, softening, theta) {}
 
 void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     int hwThreadCount = std::thread::hardware_concurrency();
@@ -21,21 +21,21 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
     }
     s1.stopAndOutput();
 
-//    auto s2 = Stopwatch::createAndStart("  build tree");
-//    OctTree octTree{model};
-//    s2.stopAndOutput();
-//
-//    auto s3 = Stopwatch::createAndStart("  tree traversal");
-//    std::thread threads[hwThreadCount];
-//    for (int i = 0; i < hwThreadCount; ++i) {
-//        int start = model.size() * i / hwThreadCount;
-//        int end = model.size() * (i + 1) / hwThreadCount;
-//        threads[i] = std::thread{[&](int start, int end) {
-//            for (int i = start; i < end; ++i) {
-//                model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree(octTree.root, octTree.length, model.pos(i));
-//            }
-//        }, start, end};
-//    }
+    //    auto s2 = Stopwatch::createAndStart("  build tree");
+    //    OctTree octTree{model};
+    //    s2.stopAndOutput();
+    //
+    //    auto s3 = Stopwatch::createAndStart("  tree traversal");
+    //    std::thread threads[hwThreadCount];
+    //    for (int i = 0; i < hwThreadCount; ++i) {
+    //        int start = model.size() * i / hwThreadCount;
+    //        int end = model.size() * (i + 1) / hwThreadCount;
+    //        threads[i] = std::thread{[&](int start, int end) {
+    //            for (int i = start; i < end; ++i) {
+    //                model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree(octTree.root, octTree.length, model.pos(i));
+    //            }
+    //        }, start, end};
+    //    }
 
     auto s2 = Stopwatch::createAndStart("build octree");
     BreadthFirstOctree octTree{model};
@@ -47,10 +47,12 @@ void ForceCalcBarnesHutParallel::updateNetAccel(Model &model) const {
         int start = model.size() * i / hwThreadCount;
         int end = model.size() * (i + 1) / hwThreadCount;
         threads[i] = std::thread{[&](int start, int end) {
-            for (int i = start; i < end; ++i) {
-                model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree2(octTree, BreadthFirstOctree::root, octTree.getLength(), model.pos(i));
-            }
-        }, start, end};
+                                     for (int i = start; i < end; ++i) {
+                                         model.acc(i) += ForceCalcBarnesHut::gravFieldViaTree2(octTree, BreadthFirstOctree::root,
+                                                                                               octTree.getLength(), model.pos(i));
+                                     }
+                                 },
+                                 start, end};
     }
 
     for (auto &octantThread : threads) {
