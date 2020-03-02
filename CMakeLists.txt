@@ -3,7 +3,7 @@ project(bh_sim)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g -pthread")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast -g -march=native -pthread")
 include_directories(.)
 
 add_executable(nbody
@@ -25,11 +25,3 @@ add_executable(nbody
         integrator/integrator_leapfrog.cpp
         utils/stopwatch.cpp
         )
-
-
-add_executable(nbody_test
-        test/catch.hpp
-        test/test_main.cpp
-        test/test_octree.cpp
-        )
-
