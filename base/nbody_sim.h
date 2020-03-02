@@ -31,7 +31,8 @@ class NBodySim final {
 
     void advanceSingleStep();
 
-    void addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass, double massStdDev, int seed);
+    void addUniformSphericalBlob(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double radiusCutoff, double velStdDev,
+                                 double avgMass, double massStdDev, int seed);
 
     void addStar(Star star);
 

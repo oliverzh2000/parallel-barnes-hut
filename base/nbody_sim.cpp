@@ -24,31 +24,25 @@ void NBodySim::advanceSingleStep() {
     integrator->advanceSingleStep(*forceCalc, model);
 }
 
-void NBodySim::addXYPlaneSpiralGalaxy(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double avgMass, double massStdDev,
-                                      int seed) {
-    std::default_random_engine uniformRng{seed};
-    std::normal_distribution<double> radialDistanceGenerator{0, radialStdDev};
-    std::normal_distribution<double> massGenerator{avgMass, massStdDev};
+void NBodySim::addUniformSphericalBlob(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double radiusCutoff, double velStdDev,
+                                       double avgMass, double massStdDev, int seed) {
+    std::default_random_engine unifRNG{seed};
+    std::normal_distribution<double> radialDistRNG{0, radialStdDev};
+    std::normal_distribution<double> velRNG{0, velStdDev};
+    std::normal_distribution<double> massRNG{avgMass, massStdDev};
 
     Model newGalaxy;
 
-    // 1) Randomly generate the positions of the stars.
+    // 1) Randomly generate the positions of the stars. Make sure they all are inside the radius cutoff.
     for (int i = 0; i < n - 1; ++i) {
-        newGalaxy.addStar(
-            // TODO: make this a disk after debugging done.
-            {Vec3D{radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng), radialDistanceGenerator(uniformRng)},
-             Vec3D{0, 0, 0}, massGenerator(uniformRng)});
+        while (true) {
+            Vec3D candidateCenterPos = Vec3D{radialDistRNG(unifRNG), radialDistRNG(unifRNG), radialDistRNG(unifRNG)};
+            if (candidateCenterPos.distanceTo({0, 0, 0}) <= radiusCutoff) {
+                newGalaxy.addStar({candidateCenterPos, Vec3D{velRNG(unifRNG), velRNG(unifRNG), velRNG(unifRNG)}, massRNG(unifRNG)});
+                break;
+            }
+        }
     }
-
-    // 2) Add the supermassive black hole in the center.
-    double totalMass = 0;
-    for (const Star &star : newGalaxy.getStars()) {
-        totalMass += star.mass;
-    }
-    newGalaxy.addStar({Vec3D{0, 0, 0}, Vec3D{0, 0, 0}, totalMass});
-
-    // TODO: 3) Compute gravitational field at position of every star and set it's
-    //      velocity so that it is in uniform circular motion at time=0
     model.appendFrom(newGalaxy);
 }
 
@@ -148,10 +142,12 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
         auto centerPos = readVec3DParamByName(in, "centerPos");
         auto centerVel = readVec3DParamByName(in, "centerVel");
         auto radialStdDev = readParamByName<double>(in, "radialStdDev");
+        auto radialCutoff = readParamByName<double>(in, "radialCutoff");
+        auto velStdDev = readParamByName<double>(in, "velStdDev");
         auto avgMass = readParamByName<double>(in, "avgMass");
         auto avgMassStdDev = readParamByName<double>(in, "avgMassStdDev");
         auto seed = readParamByName<int>(in, "seed");
-        sim.addXYPlaneSpiralGalaxy(n, centerPos, centerVel, radialStdDev, avgMass, avgMassStdDev, seed);
+        sim.addUniformSphericalBlob(n, centerPos, centerVel, radialStdDev, radialCutoff, velStdDev, avgMass, avgMassStdDev, seed);
     } else {
         throw std::runtime_error{"invalid stars init mode"};
     }
@@ -179,7 +175,8 @@ void NBodySim::writeToFile(const std::string &simDir, bool writeHumanReadable, b
     latestFrameIndexOfs << integrator->getTimestepCount() << std::endl;
 }
 
-template <typename T> T NBodySim::readParamByName(std::istream &in, const std::string &expectedName) {
+template <typename T>
+T NBodySim::readParamByName(std::istream &in, const std::string &expectedName) {
     verifyParamName(in, expectedName);
     T value;
     in >> value;
@@ -188,12 +185,11 @@ template <typename T> T NBodySim::readParamByName(std::istream &in, const std::s
 
 Vec3D NBodySim::readVec3DParamByName(std::istream &in, const std::string &expectedName) {
     verifyParamName(in, expectedName);
-    return Vec3D{readParamByName<double>(in, "x"),
-                 readParamByName<double>(in, "y"),
-                 readParamByName<double>(in, "z")};
+    return Vec3D{readParamByName<double>(in, "x"), readParamByName<double>(in, "y"), readParamByName<double>(in, "z")};
 }
 
-template <typename T> void NBodySim::writeParamWithName(std::ostream &out, const std::string &name, T value, int indentLevel) {
+template <typename T>
+void NBodySim::writeParamWithName(std::ostream &out, const std::string &name, T value, int indentLevel) {
     int charsPerIndent = 4;
     out << std::string(charsPerIndent * indentLevel, ' ');
     out << name << ": " << value << std::endl;
