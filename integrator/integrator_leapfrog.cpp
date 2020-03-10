@@ -19,7 +19,7 @@ void IntegratorLeapfrog::advanceSingleStep(const ForceCalc &forceCalc, Model &mo
     }
     s1.stopAndOutput();
 
-    auto s2 = Stopwatch::createAndStart("updateNetAccel");
+    auto s2 = Stopwatch::createAndStart("update net accel");
     forceCalc.updateNetAccel(model);
     s2.stopAndOutput();
 

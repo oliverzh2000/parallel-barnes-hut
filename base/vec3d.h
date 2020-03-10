@@ -16,6 +16,8 @@ struct Vec3D {
     /// Return the (euclidean) distance from this to the given Vec3D.
     double distanceTo(const Vec3D &other) const;
 
+    double length() const;
+
     Vec3D &operator+=(const Vec3D &other);
 
     Vec3D operator+(const Vec3D &other) const;

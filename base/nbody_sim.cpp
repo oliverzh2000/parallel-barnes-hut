@@ -24,21 +24,24 @@ void NBodySim::advanceSingleStep() {
     integrator->advanceSingleStep(*forceCalc, model);
 }
 
-void NBodySim::addUniformSphericalBlob(int n, Vec3D centerPos, Vec3D centerVel, double radialStdDev, double radiusCutoff, double velStdDev,
-                                       double avgMass, double massStdDev, int seed) {
+void NBodySim::addUniformSphericalBlob(int n, Vec3D centerPos, Vec3D centerVel, double radius, double avgStarSpeed, double starSpeedStdDev,
+                                       double starMassStdDev, int nBlackHoles, double avgBlackHoleMass, double blackHoleMassStdDev,
+                                       int seed, double avgStarMass) {
     std::default_random_engine unifRNG{seed};
-    std::normal_distribution<double> radialDistRNG{0, radialStdDev};
-    std::normal_distribution<double> velRNG{0, velStdDev};
-    std::normal_distribution<double> massRNG{avgMass, massStdDev};
+    std::uniform_real_distribution<double> radialDistRNG{-radius, radius};
+    std::normal_distribution<double> velRNG{avgStarSpeed, starSpeedStdDev};
+    std::normal_distribution<double> starMassRNG{avgStarMass, starMassStdDev};
+    std::normal_distribution<double> blackHoleMassRNG{avgBlackHoleMass, blackHoleMassStdDev};
 
     Model newGalaxy;
 
     // 1) Randomly generate the positions of the stars. Make sure they all are inside the radius cutoff.
-    for (int i = 0; i < n - 1; ++i) {
+    for (int i = 0; i < n; ++i) {
         while (true) {
             Vec3D candidateCenterPos = Vec3D{radialDistRNG(unifRNG), radialDistRNG(unifRNG), radialDistRNG(unifRNG)};
-            if (candidateCenterPos.distanceTo({0, 0, 0}) <= radiusCutoff) {
-                newGalaxy.addStar({candidateCenterPos, Vec3D{velRNG(unifRNG), velRNG(unifRNG), velRNG(unifRNG)}, massRNG(unifRNG)});
+            if (candidateCenterPos.length() <= radius) {
+                newGalaxy.addStar({candidateCenterPos, generateSphericalPoint(unifRNG, avgStarSpeed, starSpeedStdDev),
+                                   i < nBlackHoles ? blackHoleMassRNG(unifRNG) : starMassRNG(unifRNG)});
                 break;
             }
         }
@@ -137,17 +140,21 @@ NBodySim NBodySim::readFromFile(const std::string &simDir) {
 
         std::ifstream frameIfs{simDir + "/short-frames/frame-" + std::to_string(latestBinaryFrameNumber) + ".data", std::ios::binary};
         sim.model.deSerializeSpaceEfficient(frameIfs);
-    } else if (starsInitMode == "CreateSpiralGalaxy") {
+    } else if (starsInitMode == "CreateUniformSphericalBlob") {
         auto n = readParamByName<int>(in, "n");
         auto centerPos = readVec3DParamByName(in, "centerPos");
         auto centerVel = readVec3DParamByName(in, "centerVel");
-        auto radialStdDev = readParamByName<double>(in, "radialStdDev");
-        auto radialCutoff = readParamByName<double>(in, "radialCutoff");
-        auto velStdDev = readParamByName<double>(in, "velStdDev");
-        auto avgMass = readParamByName<double>(in, "avgMass");
-        auto avgMassStdDev = readParamByName<double>(in, "avgMassStdDev");
+        auto radialStdDev = readParamByName<double>(in, "radius");
+        auto avgStarSpeed = readParamByName<double>(in, "avgStarSpeed");
+        auto starSpeedStdDev = readParamByName<double>(in, "starSpeedStdDev");
+        auto avgMass = readParamByName<double>(in, "avgStarMass");
+        auto avgMassStdDev = readParamByName<double>(in, "starMassStdDev");
+        auto nBlackHoles = readParamByName<int>(in, "nBlackHoles");
+        auto avgBlackHoleMass = readParamByName<double>(in, "avgBlackHoleMass");
+        auto blackHoleMassStdDev = readParamByName<double>(in, "blackHoleMassStdDev");
         auto seed = readParamByName<int>(in, "seed");
-        sim.addUniformSphericalBlob(n, centerPos, centerVel, radialStdDev, radialCutoff, velStdDev, avgMass, avgMassStdDev, seed);
+        sim.addUniformSphericalBlob(n, centerPos, centerVel, radialStdDev, avgStarSpeed, starSpeedStdDev, avgMassStdDev, nBlackHoles,
+                                    avgBlackHoleMass, blackHoleMassStdDev, seed, avgMass);
     } else {
         throw std::runtime_error{"invalid stars init mode"};
     }
@@ -204,4 +211,10 @@ void NBodySim::verifyParamName(std::istream &in, const std::string &expectedName
     if (nameWithColon.back() != ':') {
         throw std::runtime_error{expectedName + " not followed by ':'."};
     }
+}
+Vec3D NBodySim::generateSphericalPoint(std::default_random_engine unifRNG, double avgMagnitude, double stdDev) {
+    std::normal_distribution<double> stdNormalRNG{0, 1};
+    std::normal_distribution<double> speedRNG(avgMagnitude, stdDev);
+    Vec3D unscaledPoint = {stdNormalRNG(unifRNG), stdNormalRNG(unifRNG), stdNormalRNG(unifRNG)};
+    return unscaledPoint * (speedRNG(unifRNG) / unscaledPoint.length());
 }

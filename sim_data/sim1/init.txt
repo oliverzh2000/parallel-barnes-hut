@@ -6,8 +6,8 @@ forceCalcType: ForceCalcBarnesHutParallel
     softening: 0.01
     theta: 1.0
 
-starsInitMode: CreateSpiralGalaxy
-    n: 10000000
+starsInitMode: CreateUniformSphericalBlob
+    n: 10000
     centerPos:
         x: 0
         y: 0
@@ -16,9 +16,12 @@ starsInitMode: CreateSpiralGalaxy
         x: 0
         y: 0
         z: 0
-    radialStdDev: 100
-    radialCutoff: 500
-    velStdDev: 1
-    avgMass: 1
-    avgMassStdDev: 0
+    radius: 500
+    avgStarSpeed: 10000
+    starSpeedStdDev: 10000
+    avgStarMass: 1
+    starMassStdDev: 0
+    nBlackHoles: 10
+    avgBlackHoleMass: 100
+    blackHoleMassStdDev: 0
     seed: 0

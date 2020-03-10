@@ -17,7 +17,7 @@ void ForceCalcBarnesHut::updateNetAccel(Model &model) const {
     }
     s1.stopAndOutput();
 
-    bool flat = false;
+    bool flat = true;
 
     if (!flat) {
         auto s2 = Stopwatch::createAndStart("build octree");

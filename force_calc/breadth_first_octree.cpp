@@ -15,6 +15,8 @@ BreadthFirstOctree::BreadthFirstOctree(const Model &model) {
 
     auto s1 = Stopwatch::createAndStart("build octree");
     Octree octTree{model};
+    s1.stopAndOutput();
+
     center = octTree.center;
     length = octTree.length;
 
