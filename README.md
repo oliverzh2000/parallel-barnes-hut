@@ -3,10 +3,12 @@
 
 A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
 
-CUDA GPU acceleration, simulation viewer, simulation data compression, and optimized support for other compilers (non-GCC) coming soon. See [Roadmap](#roadmap)
+CUDA GPU acceleration, interactive simulation viewer, lossy simulation data compression (DCT based), and optimized support for other compilers (non-GCC) coming soon. See [Roadmap](#roadmap)
 
 # Gallery
-Coming soon. Simulation in progress on Google Compute Engine.
+![](fast_demo.gif)
+
+The above is a fast-forwarded and reduced resolution render from a previous project. Full-size 3D demo coming soon. Simulation in progress on Google Compute Engine.
 
 # Getting Started
 1. Checkout the repo from github, and build the project with `cmake`
