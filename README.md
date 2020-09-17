@@ -8,7 +8,9 @@ CUDA GPU acceleration, interactive simulation viewer, lossy simulation data comp
 # Gallery
 ![](fast_demo.gif)
 
-The above is a fast-forwarded and reduced resolution render from a previous project. Full-size 3D demo coming soon. Simulation in progress on Google Compute Engine.
+The above is a fast-forwarded and reduced resolution render from a much older project. 
+
+Full-size 3D demo coming soon. Simulation in progress on Google Compute Engine.
 
 # Getting Started
 1. Checkout the repo from github, and build the project with `cmake`
