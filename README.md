@@ -1,7 +1,7 @@
 # Parallel 3D Barnes-Hut N-Body Simulation
 #### Version 2.0.0
 
-A parallelized and efficient C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
+A parallelized and high-performance C++ implementation of the [Barnes-Hut algorithm](https://en.wikipedia.org/wiki/Barnes-Hut_simulation) for simulating an N-body system and visualizing it.
 
 CUDA GPU acceleration, interactive simulation viewer, lossy simulation data compression (DCT based), and optimized support for other compilers (non-GCC) coming soon. See [Roadmap](#roadmap)
 
